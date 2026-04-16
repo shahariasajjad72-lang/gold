@@ -359,12 +359,12 @@ export default function DailyReportModal({
                   <div
                     id="report-capture-area"
                     ref={reportAreaRef}
-                    className="p-6 lg:p-8 report-content print:space-y-6 flex flex-col justify-between min-h-full bg-white dark:bg-black"
+                    className="p-4 sm:p-8 report-content print:space-y-6 flex flex-col justify-between min-h-full bg-white dark:bg-black"
                   >
                     <div className="space-y-4 lg:space-y-5 flex-1">
                       {/* Professional Company Header */}
                       <div className="text-center pb-4 border-b-2 border-slate-900 dark:border-zinc-600 relative">
-                        <h1 className="text-2xl lg:text-[32px] font-black tracking-tight text-slate-900 dark:text-white mb-1 uppercase">
+                        <h1 className="text-xl sm:text-2xl lg:text-[32px] font-black tracking-tight text-slate-900 dark:text-white mb-1 uppercase">
                           বাংলা গোল্ড (প্রাঃ) লিমিটেড
                         </h1>
                         <p className="text-[11px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-[0.5em] mb-2">
@@ -735,7 +735,7 @@ export default function DailyReportModal({
                     <div className="mt-8 pt-4 lg:pt-5 border-t-2 border-slate-900 border-dashed dark:border-zinc-600 relative shrink-0">
                       <div className="flex flex-col sm:flex-row justify-between items-end gap-6 sm:gap-2">
                         {/* Signatures */}
-                        <div className="flex gap-16 lg:gap-24 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-zinc-500 w-full sm:w-auto">
+                        <div className="flex gap-8 sm:gap-16 lg:gap-24 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-zinc-500 w-full sm:w-auto justify-between sm:justify-start">
                           <div className="space-y-12">
                             <div className="border-t-2 border-slate-900 dark:border-zinc-500 pt-1.5 text-center px-4">
                               হিসাব রক্ষক (ACCOUNTANT)

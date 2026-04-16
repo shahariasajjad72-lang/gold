@@ -15,7 +15,7 @@ export default function DashboardHeader() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-border">
-      <div className="container mx-auto px-4 h-24 flex items-center justify-between max-w-[1700px]">
+      <div className="container mx-auto px-4 h-20 sm:h-24 flex items-center justify-between max-w-[1700px]">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-[18px] bg-black dark:bg-white flex items-center justify-center text-white dark:text-black shadow-lg">
             <LayoutDashboard className="w-6 h-6" />

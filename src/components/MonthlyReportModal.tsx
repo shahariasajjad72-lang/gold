@@ -185,7 +185,7 @@ export default function MonthlyReportModal({
                   >
                     {/* Professional Company Header */}
                     <div className="text-center space-y-2 border-b-2 border-slate-900 pb-6">
-                      <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                      <h1 className="text-xl sm:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
                         বাংলা গোল্ড (প্রাঃ) লিমিটেড
                       </h1>
                       <div className="flex flex-col items-center gap-1">
@@ -243,8 +243,8 @@ export default function MonthlyReportModal({
                       </div>
                     </div>
 
-                    <div className="flex justify-between items-end pt-12 border-t border-slate-200 border-dashed">
-                      <div className="flex gap-20 text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">
+                    <div className="flex flex-col sm:flex-row justify-between items-end gap-8 pt-12 border-t border-slate-200 border-dashed">
+                      <div className="flex gap-8 sm:gap-20 text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 w-full sm:w-auto justify-between sm:justify-start">
                         <div className="space-y-12">
                           <div className="border-t-2 border-slate-900 pt-2 text-center px-4">হিসাব রক্ষক</div>
                         </div>

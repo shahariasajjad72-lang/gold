@@ -68,7 +68,7 @@ export default function AddBankTransactionModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -81,16 +81,10 @@ export default function AddBankTransactionModal({
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative w-full max-w-lg bg-white/90 dark:bg-[#050505]/90 backdrop-blur-xl rounded-[40px] border border-white/20 dark:border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] overflow-hidden"
+        className="relative w-full max-w-lg bg-white/90 dark:bg-[#050505]/90 backdrop-blur-xl rounded-[32px] sm:rounded-[40px] border border-white/20 dark:border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col max-h-[96vh]"
       >
-        {/* Glow Effect */}
-        <div className={cn(
-          "absolute -top-24 -left-24 w-48 h-48 rounded-full blur-[100px] transition-colors duration-500",
-          type === 'income' ? "bg-blue-500/20" : "bg-amber-500/20"
-        )} />
-
-        <div className="relative p-6 md:p-8">
-          <div className="flex justify-between items-start mb-8">
+        <div className="relative p-6 md:p-8 overflow-y-auto custom-scrollbar">
+          <div className="flex justify-between items-start mb-6 md:mb-8">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className={cn(
@@ -100,7 +94,7 @@ export default function AddBankTransactionModal({
                   BANK {type === 'income' ? 'DEPOSIT' : 'WITHDRAWAL'}
                 </span>
               </div>
-              <h2 className="text-3xl font-black tracking-tighter uppercase italic line-clamp-1">Bank Entry</h2>
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tighter uppercase italic line-clamp-1">Bank Entry</h2>
             </div>
             <button 
               onClick={onClose}
@@ -159,7 +153,7 @@ export default function AddBankTransactionModal({
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full pl-14 pr-12 py-4 rounded-2xl bg-muted/30 border border-border/50 focus:border-foreground focus:bg-background outline-none font-bold text-sm appearance-none transition-all cursor-pointer"
+                  className="w-full pl-14 pr-12 py-3.5 sm:py-4 rounded-2xl bg-muted/30 border border-border/50 focus:border-foreground focus:bg-background outline-none font-bold text-sm appearance-none transition-all cursor-pointer"
                 >
                   {BANK_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                 </select>
@@ -177,7 +171,7 @@ export default function AddBankTransactionModal({
                     type="date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="w-full pl-11 pr-4 py-4 rounded-2xl bg-muted/30 border border-border/50 focus:border-foreground focus:bg-background outline-none font-bold text-sm transition-all"
+                    className="w-full pl-11 pr-4 py-3.5 sm:py-4 rounded-2xl bg-muted/30 border border-border/50 focus:border-foreground focus:bg-background outline-none font-bold text-sm transition-all"
                   />
                 </div>
               </div>
@@ -193,7 +187,7 @@ export default function AddBankTransactionModal({
                     placeholder="0.00"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="w-full pl-11 pr-4 py-4 rounded-2xl bg-muted/30 border border-border/50 focus:border-foreground focus:bg-background outline-none font-black text-sm transition-all placeholder:text-muted-foreground/30"
+                    className="w-full pl-11 pr-4 py-3.5 sm:py-4 rounded-2xl bg-muted/30 border border-border/50 focus:border-foreground focus:bg-background outline-none font-black text-sm transition-all placeholder:text-muted-foreground/30"
                   />
                 </div>
               </div>
@@ -209,7 +203,7 @@ export default function AddBankTransactionModal({
                   placeholder="Enter specific details..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full pl-11 pr-4 py-4 rounded-2xl bg-muted/30 border border-border/50 focus:border-foreground focus:bg-background outline-none font-bold text-sm resize-none transition-all placeholder:text-muted-foreground/30"
+                  className="w-full pl-11 pr-4 py-3.5 sm:py-4 rounded-2xl bg-muted/30 border border-border/50 focus:border-foreground focus:bg-background outline-none font-bold text-sm resize-none transition-all placeholder:text-muted-foreground/30"
                 />
               </div>
             </div>
@@ -218,7 +212,7 @@ export default function AddBankTransactionModal({
               type="submit"
               disabled={isLoading}
               className={cn(
-                "w-full py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-3 active:scale-95 transition-all disabled:opacity-50 mt-4 shadow-xl",
+                "w-full py-4 sm:py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-3 active:scale-95 transition-all disabled:opacity-50 mt-4 shadow-xl",
                 type === 'income' 
                   ? "bg-blue-600 text-white shadow-blue-600/20 hover:shadow-blue-600/40" 
                   : "bg-amber-600 text-white shadow-amber-600/20 hover:shadow-amber-600/40"

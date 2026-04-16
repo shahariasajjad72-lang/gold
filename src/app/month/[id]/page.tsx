@@ -110,7 +110,7 @@ export default function MonthDetailPage() {
             Back to Dashboard
           </button>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -173,8 +173,8 @@ export default function MonthDetailPage() {
           </div>
         </div>
 
-        <div className="mb-12 lg:mb-16">
-          <h1 className="text-4xl lg:text-7xl font-black tracking-tighter text-foreground mb-1">{month.name}</h1>
+        <div className="mb-8 lg:mb-16">
+          <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black tracking-tighter text-foreground mb-1">{month.name}</h1>
           <p className="text-sm lg:text-lg text-muted-foreground font-bold uppercase tracking-widest italic">{toBanglaNumeral(month.year)} Financial Overview</p>
         </div>
 
