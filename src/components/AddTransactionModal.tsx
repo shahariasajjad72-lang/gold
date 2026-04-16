@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils';
 import { addTransaction } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
 
-import { INCOME_CATEGORIES, COSTING_CATEGORIES, getSuggestions } from '@/lib/constants';
+import { INCOME_CATEGORIES, COSTING_CATEGORIES, WEIGHT_TRACKED_CATEGORIES, getSuggestions } from '@/lib/constants';
 
 interface AddTransactionModalProps {
   monthId: number;
@@ -63,7 +63,7 @@ export default function AddTransactionModal({ monthId, monthName, monthYear, isO
 
   const suggestions = getSuggestions(category);
 
-  const isWeightCategory = category === "স্বর্ণ পাকাইকরন হতে আয়" && type === 'income';
+  const isWeightCategory = WEIGHT_TRACKED_CATEGORIES.includes(category) && type === 'income';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

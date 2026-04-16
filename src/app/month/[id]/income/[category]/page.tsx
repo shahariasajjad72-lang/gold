@@ -8,6 +8,7 @@ import TransactionTable from '@/components/TransactionTable';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Wallet, Info } from 'lucide-react';
 import { isAuthenticated } from '@/lib/auth';
+import { WEIGHT_TRACKED_CATEGORIES } from '@/lib/constants';
 
 export default function IncomeCategoryPage() {
   const params = useParams();
@@ -18,7 +19,7 @@ export default function IncomeCategoryPage() {
 
   const category = decodeURIComponent(params.category as string);
   const monthId = parseInt(params.id as string);
-  const isWeightCategory = category === "স্বর্ণ পাকাইকরন হতে আয়";
+  const isWeightCategory = WEIGHT_TRACKED_CATEGORIES.includes(category);
 
   const fetchData = async () => {
     const monthData = await getMonthById(monthId);

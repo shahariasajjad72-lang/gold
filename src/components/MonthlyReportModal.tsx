@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import {
   X,
   Printer,
@@ -13,10 +13,13 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { Scale } from "lucide-react";
 import {
   getMonthlyDailyBreakdown,
   getMonthById,
+  getTransactions,
 } from "@/lib/actions";
+import { WEIGHT_TRACKED_CATEGORIES } from "@/lib/constants";
 import {
   formatBanglaDate,
   toBanglaNumeral,
@@ -36,6 +39,7 @@ export default function MonthlyReportModal({
 }: MonthlyReportModalProps) {
   const [reportData, setReportData] = useState<any[]>([]);
   const [monthData, setMonthData] = useState<any>(null);
+  const [transactions, setTransactions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const reportAreaRef = useRef<HTMLDivElement>(null);
@@ -52,8 +56,37 @@ export default function MonthlyReportModal({
     setMonthData(mData);
     const data = await getMonthlyDailyBreakdown(monthId);
     setReportData(data);
+
+    // Fetch all transactions to calculate weights
+    const allTrans: any[] = [];
+    for (const cat of WEIGHT_TRACKED_CATEGORIES) {
+      const catTrans = await getTransactions(monthId, cat);
+      allTrans.push(...catTrans);
+    }
+    setTransactions(allTrans);
+    
     setIsLoading(false);
   };
+
+  const weightSummary = useMemo(() => {
+    const summary: Record<string, number> = {};
+    WEIGHT_TRACKED_CATEGORIES.forEach((cat) => {
+      summary[cat] = 0;
+    });
+
+    transactions.forEach((t) => {
+      if (t.weight) {
+        summary[t.category] += parseFloat(t.weight);
+      }
+    });
+
+    return summary;
+  }, [transactions]);
+
+  const totalWeight = Object.values(weightSummary).reduce(
+    (sum, w) => sum + w,
+    0,
+  );
 
   const handlePrint = () => {
     const node = reportAreaRef.current;
@@ -242,6 +275,47 @@ export default function MonthlyReportModal({
                       </table>
                       </div>
                     </div>
+
+                    {/* Monthly Weight Summary */}
+                    {totalWeight > 0 && (
+                      <div className="mt-10 border-2 border-slate-900 shadow-sm rounded-3xl overflow-hidden page-break-avoid">
+                        <div className="flex items-center justify-between px-6 py-3 bg-slate-900 text-white border-b border-slate-900">
+                          <h3 className="text-[12px] font-black uppercase tracking-[0.2em]">
+                            মাসিক স্বর্ণের ওজন সংক্রান্ত সারসংক্ষেপ (MONTHLY WEIGHT SUMMARY)
+                          </h3>
+                          <Scale className="w-4 h-4 text-amber-400" />
+                        </div>
+                        <div className="bg-white dark:bg-black p-6">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-12">
+                            {WEIGHT_TRACKED_CATEGORIES.map((cat) => {
+                              const w = weightSummary[cat];
+                              if (w === 0) return null;
+                              return (
+                                <div
+                                  key={cat}
+                                  className="flex justify-between items-center border-b border-slate-100 dark:border-zinc-800 pb-2"
+                                >
+                                  <span className="text-[12px] font-bold text-slate-500 dark:text-zinc-400">
+                                    {cat.replace(" হতে প্রাপ্ত আয়", "")}:
+                                  </span>
+                                  <span className="text-[14px] font-black text-slate-900 dark:text-zinc-200">
+                                    {toBanglaNumeral(w.toFixed(2))} গ্রাম
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <div className="mt-6 pt-4 border-t-2 border-slate-950 dark:border-zinc-700 flex justify-between items-center">
+                            <span className="text-[14px] font-black uppercase tracking-widest text-slate-900 dark:text-zinc-100 italic">
+                              মাসের সর্বমোট ওজন (TOTAL MONTHLY WEIGHT):
+                            </span>
+                            <span className="text-[20px] font-black text-indigo-600 dark:text-indigo-400 underline decoration-double underline-offset-4">
+                              {toBanglaNumeral(totalWeight.toFixed(2))} গ্রাম
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     <div className="flex flex-col sm:flex-row justify-between items-end gap-8 pt-12 border-t border-slate-200 border-dashed">
                       <div className="flex gap-8 sm:gap-20 text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 w-full sm:w-auto justify-between sm:justify-start">

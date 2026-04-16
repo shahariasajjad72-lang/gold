@@ -12,6 +12,7 @@ import {
   TrendingDown,
   Clock,
   Download,
+  Scale,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
@@ -29,7 +30,7 @@ import {
   formatBanglaAmount,
 } from "@/lib/utils/bangla-date";
 import { useRouter } from "next/navigation";
-import { getSuggestions } from "@/lib/constants";
+import { getSuggestions, WEIGHT_TRACKED_CATEGORIES } from "@/lib/constants";
 
 // Helper to shorten long category names professionally
 const shortenCategory = (name: string) => {
@@ -149,6 +150,27 @@ export default function DailyReportModal({
     0,
   );
 
+  // Group weights by category
+  const weightSummary = useMemo(() => {
+    const summary: Record<string, number> = {};
+    WEIGHT_TRACKED_CATEGORIES.forEach((cat) => {
+      summary[cat] = 0;
+    });
+
+    incomeTransactions.forEach((t) => {
+      if (t.weight && WEIGHT_TRACKED_CATEGORIES.includes(t.category)) {
+        summary[t.category] += parseFloat(t.weight);
+      }
+    });
+
+    return summary;
+  }, [incomeTransactions]);
+
+  const totalWeight = Object.values(weightSummary).reduce(
+    (sum, w) => sum + w,
+    0,
+  );
+
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure?")) return;
     const res = await deleteTransaction(id, monthId);
@@ -173,7 +195,11 @@ export default function DailyReportModal({
       setTransactions((prev) =>
         prev.map((t) =>
           t.id === id
-            ? { ...t, description: editDesc, amount: parseInt(editAmount) }
+            ? {
+                ...t,
+                description: editDesc,
+                amount: parseInt(editAmount),
+              }
             : t,
         ),
       );
@@ -441,7 +467,14 @@ export default function DailyReportModal({
                                           </div>
                                         </div>
                                       ) : (
-                                        <span>{t.description}</span>
+                                        <div className="flex flex-col">
+                                          <span>{t.description}</span>
+                                          {t.weight && (
+                                            <span className="text-[10px] font-black text-indigo-500 dark:text-indigo-400 mt-0.5">
+                                              ওজন: {toBanglaNumeral(t.weight)} গ্রাম
+                                            </span>
+                                          )}
+                                        </div>
                                       )}
                                     </td>
                                     <td className="px-2 py-1.5 text-right font-black text-slate-900 dark:text-zinc-100 text-[13px] lg:text-[14px]">
@@ -729,6 +762,47 @@ export default function DailyReportModal({
                           </div>
                         </div>
                       </div>
+
+                      {/* Weight Summary Section (Gram Weights) */}
+                      {totalWeight > 0 && (
+                        <div className="mt-6 border-2 border-slate-900 dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm page-break-avoid">
+                          <div className="flex items-center justify-between px-3 py-1.5 bg-slate-900 text-white dark:bg-zinc-800 border-b border-slate-900">
+                            <h3 className="text-[11px] font-black uppercase tracking-[0.1em]">
+                              স্বর্ণের ওজন সংক্রান্ত সারসংক্ষেপ (WEIGHT SUMMARY)
+                            </h3>
+                            <Scale className="w-3 h-3 text-amber-400" />
+                          </div>
+                          <div className="bg-white dark:bg-black p-3">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-3 gap-x-6">
+                              {WEIGHT_TRACKED_CATEGORIES.map((cat) => {
+                                const w = weightSummary[cat];
+                                if (w === 0) return null;
+                                return (
+                                  <div
+                                    key={cat}
+                                    className="flex justify-between items-center border-b border-slate-100 dark:border-zinc-800 pb-1"
+                                  >
+                                    <span className="text-[11px] font-bold text-slate-500 dark:text-zinc-400">
+                                      {cat.replace(" হতে প্রাপ্ত আয়", "")}:
+                                    </span>
+                                    <span className="text-[12px] font-black text-slate-900 dark:text-zinc-200">
+                                      {toBanglaNumeral(w.toFixed(2))} গ্রাম
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                            <div className="mt-4 pt-2 border-t-2 border-slate-950 dark:border-zinc-700 flex justify-between items-center">
+                              <span className="text-[12px] font-black uppercase tracking-widest text-slate-900 dark:text-zinc-100 italic">
+                                সর্বমোট ওজন (TOTAL WEIGHT):
+                              </span>
+                              <span className="text-[16px] font-black text-indigo-600 dark:text-indigo-400 underline decoration-double underline-offset-4">
+                                {toBanglaNumeral(totalWeight.toFixed(2))} গ্রাম
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Signatures & Footer Logic (Pushed to bottom, minimal height constraints) */}
