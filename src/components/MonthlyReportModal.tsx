@@ -88,6 +88,9 @@ export default function MonthlyReportModal({
     0,
   );
 
+  const totalMonthlyIncome = reportData.reduce((s, d) => s + (d.income || 0), 0);
+  const totalMonthlyCosting = reportData.reduce((s, d) => s + (d.costing || 0), 0);
+
   const handlePrint = () => {
     const node = reportAreaRef.current;
     if (!node) return;
@@ -263,12 +266,22 @@ export default function MonthlyReportModal({
                           ))}
                         </tbody>
                         <tfoot className="border-t-4 border-slate-900">
-                          <tr className="bg-slate-900 text-white">
-                            <td colSpan={4} className="px-6 py-4 text-right font-black uppercase tracking-[0.2em] text-[10px]">
-                              মাসের চূড়ান্ত স্থিতি (FINAL CLOSING BALANCE):
+                          <tr className="bg-slate-800 text-white">
+                            <td className="px-4 py-3 font-black uppercase tracking-[0.15em] text-[10px] border-r border-slate-600">
+                              মাসের সারসংক্ষেপ
                             </td>
-                            <td className="px-6 py-4 text-right font-black text-xl">
-                              ৳ {formatBanglaAmount(reportData[reportData.length - 1]?.closing || 0)}
+                            <td className="px-4 py-3 border-r border-slate-600" />
+                            <td className="px-4 py-3 text-right border-r border-slate-600">
+                              <div className="text-[9px] font-bold uppercase tracking-widest text-emerald-400 mb-0.5">মোট আয়</div>
+                              <div className="font-black text-base text-emerald-300">৳ {formatBanglaAmount(totalMonthlyIncome)}</div>
+                            </td>
+                            <td className="px-4 py-3 text-right border-r border-slate-600">
+                              <div className="text-[9px] font-bold uppercase tracking-widest text-rose-400 mb-0.5">মোট ব্যয়</div>
+                              <div className="font-black text-base text-rose-300">৳ {formatBanglaAmount(totalMonthlyCosting)}</div>
+                            </td>
+                            <td className="px-4 py-3 text-right">
+                              <div className="text-[9px] font-bold uppercase tracking-widest text-amber-400 mb-0.5">চূড়ান্ত স্থিতি</div>
+                              <div className="font-black text-xl">৳ {formatBanglaAmount(reportData[reportData.length - 1]?.closing || 0)}</div>
                             </td>
                           </tr>
                         </tfoot>

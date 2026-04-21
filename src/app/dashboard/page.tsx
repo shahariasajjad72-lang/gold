@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter, LayoutGrid } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { getMonths } from '@/lib/actions';
+import GlobalBankAccountManager from '@/components/GlobalBankAccountManager';
 
 // Lazy-load heavy modal
 const AddMonthModal = dynamic(() => import('@/components/AddMonthModal'), { ssr: false });
@@ -77,7 +78,15 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        <GlobalBankAccountManager />
+
         {/* Grid of Months - Updated to Three in a Row + wider for 2xl */}
+        <div className="flex items-center gap-2 mb-6 px-1">
+          <div className="p-2 lg:p-3 rounded-2xl bg-amber-500/10 text-amber-600">
+             <LayoutGrid className="w-5 h-5" />
+          </div>
+          <h2 className="text-xl lg:text-3xl font-black tracking-tight text-foreground">Monthly Ledgers</h2>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 lg:gap-8">
           <AnimatePresence mode="popLayout">
             {months.map((month) => (

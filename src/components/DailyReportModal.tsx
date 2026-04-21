@@ -140,15 +140,17 @@ export default function DailyReportModal({
   );
 
   const costingTransactions = useMemo(
-    () => transactions.filter((t) => t.type === "costing"),
+    () => transactions.filter((t) => {
+      const isBankSalary = 
+        t.category.startsWith("স্টাফদের বেতন প্রধান (ব্যাংক)") || 
+        t.category.startsWith("পরিচালকগণের সম্মানী প্রদান (ব্যাংক)");
+      return t.type === "costing" && !isBankSalary;
+    }),
     [transactions],
   );
 
   const totalIncome = incomeTransactions.reduce((sum, t) => sum + t.amount, 0);
-  const totalCosting = costingTransactions.reduce(
-    (sum, t) => sum + t.amount,
-    0,
-  );
+  const totalCosting = costingTransactions.reduce((sum, t) => sum + t.amount, 0);
 
   // Group weights by category
   const weightSummary = useMemo(() => {

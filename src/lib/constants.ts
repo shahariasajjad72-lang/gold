@@ -27,6 +27,7 @@ export const WEIGHT_TRACKED_CATEGORIES = [
 export const COSTING_CATEGORIES = [
   "পরিচালক মাসিক সম্মানী প্রদান (মাস-সাল)",
   "পরিচালকগণের সম্মানী প্রদান (ব্যাংক) (মাস-সাল)",
+  "স্টাফদের বেতন প্রধান (ব্যাংক) (মাস-সাল)",
   "ডিজিটাল মার্কেটিং (মাস-সাল)",
   "বাইতুল মোকারাম অফিস খরচ (মাস-সাল)",
   "মাসিক বেতন প্রদান (স্টাফ ক্লিনার) (মাস-সাল)",
@@ -127,6 +128,7 @@ export const DESCRIPTION_SUGGESTIONS: Record<string, string[]> = {
     "ক্লিনার বেতন",
     "স্টাফ সেলারি"
   ],
+
   "স্টেশনারি ও পি.পি.ই খরচের বিবরণ (মাস-সাল)": [
     "আদা, লং, এলাচ, চাপাতি, চিনি",
     "মার্কার কলম"
@@ -244,7 +246,7 @@ export const getSuggestions = (category: string): string[] => {
   if (!category) return [];
   // Normalize: replace any specific date inside parentheses with the placeholder for lookup
   const normalized = category.includes('(') 
-    ? category.replace(/\(.*\)/, '(মাস-সাল)') 
+    ? category.replace(/\([^)]*\)$/, '(মাস-সাল)') 
     : category;
   
   const results = DESCRIPTION_SUGGESTIONS[normalized] || [];

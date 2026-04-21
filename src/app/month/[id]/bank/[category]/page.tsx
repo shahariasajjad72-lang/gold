@@ -23,8 +23,8 @@ export default function BankCategoryPage() {
 
   const fetchData = async () => {
     const monthData = await getMonthById(monthId);
-    // For bank transactions, we fetch all-time to get accurate balance
-    const transData = await getBankTransactions(category);
+    // Fetch only this month's transactions
+    const transData = await getBankTransactions(monthId, category);
     
     if (monthData) {
       setMonth(monthData);

@@ -7,6 +7,7 @@ export const months = pgTable("months", {
   income: integer("income").default(0),
   costing: integer("costing").default(0),
   openingBalance: integer("opening_balance").default(0),
+  netBalance: integer("net_balance").default(0),
   createdAt: timestamp("created_at").defaultNow(),
 }, (table) => [
   index("months_year_idx").on(table.year),
@@ -32,3 +33,13 @@ export type Month = typeof months.$inferSelect;
 export type NewMonth = typeof months.$inferInsert;
 export type Transaction = typeof transactions.$inferSelect;
 export type NewTransaction = typeof transactions.$inferInsert;
+
+export const globalBanks = pgTable("global_banks", {
+  id: serial("id").primaryKey(),
+  category: text("category").notNull().unique(),
+  initialBalance: integer("initial_balance").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export type GlobalBank = typeof globalBanks.$inferSelect;
+export type NewGlobalBank = typeof globalBanks.$inferInsert;

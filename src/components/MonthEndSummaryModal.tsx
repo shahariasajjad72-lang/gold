@@ -33,84 +33,124 @@ export default function MonthEndSummaryModal({ monthId, isOpen, onClose }: Month
     setIsLoading(false);
   };
 
-  // ✅ Isolated-window print — completely avoids CSS conflicts with other modals
   const handlePrint = () => {
     const node = printAreaRef.current;
     if (!node) return;
 
-    const printWindow = window.open("", "_blank", "width=960,height=1100");
+    const printWindow = window.open("", "_blank", "width=1000,height=800");
     if (!printWindow) return;
 
     printWindow.document.write(`<!DOCTYPE html>
 <html lang="bn">
 <head>
   <meta charset="UTF-8" />
-  <title>${COMPANY_NAME} – মাস সমাপ্তি</title>
+  <title>মাস সমাপ্তি আর্থিক বিবরণী - ${month?.name}</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;600;700;900&display=swap');
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Noto Serif Bengali', serif; font-size: 10pt; color: #000; background: #fff; padding: 8mm; }
-    table { width: 100%; border-collapse: collapse; }
-    td, th { border: 1px solid #000; padding: 2px 4px; font-size: 9.5pt; line-height: 1.4; }
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;700;900&display=swap');
+    body { font-family: 'Noto Serif Bengali', serif; padding: 10mm; background: white; color: black; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 5px; table-layout: fixed; }
+    th, td { border: 1px solid black; padding: 4px 6px; font-size: 11px; text-align: left; overflow: hidden; word-break: break-word; }
     .text-right { text-align: right; }
-    .text-center { text-align: center; }
-    .font-bold { font-weight: 700; }
-    .font-black { font-weight: 900; }
-    .bg-dark { background: #1e293b; color: white; }
-    .bg-grey { background: #f3f4f6; }
-    .color-amber { color: #92400e; }
-    .color-green { color: #166534; }
-    .color-red { color: #991b1b; }
-    .color-blue { color: #1e40af; }
-    .section-header { background: #f3f4f6; font-weight: 900; font-size: 9pt; text-align: center; letter-spacing: 0.05em; text-transform: uppercase; }
-    @media print {
-      @page { size: A4 portrait; margin: 8mm; }
-      body { padding: 0; }
-    }
+    .font-bold { font-weight: bold; }
+    .no-print { display: none !important; }
+    @media print { @page { size: A4 portrait; margin: 0; } }
   </style>
 </head>
 <body>
-${node.innerHTML}
+  ${node.innerHTML}
 </body>
 </html>`);
 
     printWindow.document.close();
     printWindow.focus();
-    setTimeout(() => { printWindow.print(); printWindow.close(); }, 600);
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
   };
 
   const handleSaveImage = async () => {
     const node = printAreaRef.current;
     if (!node) return;
+
     setIsCapturing(true);
+
+    // Give React a tick to apply 'isCapturing' state
     setTimeout(async () => {
       try {
         const { toPng } = await import("html-to-image");
-        const dataUrl = await toPng(node, { quality: 1.0, backgroundColor: "#fff", pixelRatio: 2 });
+
+        const dataUrl = await toPng(node, {
+          quality: 1.0,
+          backgroundColor: "#ffffff",
+          pixelRatio: 2,
+        });
+
         const link = document.createElement("a");
-        link.download = `মাস-সমাপ্তি-${summaryData?.month?.name || "report"}.png`;
+        link.download = `মাসিক-সারসংক্ষেপ-${month?.name || "report"}.png`;
         link.href = dataUrl;
         link.click();
-      } catch (e) { console.error(e); }
-      finally { setIsCapturing(false); }
-    }, 150);
+      } catch (err) {
+        console.error("Failed to save image", err);
+        alert("Image saving failed.");
+      } finally {
+        setIsCapturing(false);
+      }
+    }, 100);
   };
 
-  const { month, incomeByCategory, costingByCategory, bankByCategory } = summaryData || {};
-  const totalIncome = INCOME_CATEGORIES.reduce((s, c) => s + (incomeByCategory?.[c] || 0), 0);
-  const totalCosting = COSTING_CATEGORIES.reduce((s, c) => s + (costingByCategory?.[c] || 0), 0);
-  const totalBankCredit = BANK_CATEGORIES.reduce((s, c) => s + (bankByCategory?.[c]?.credit || 0), 0);
-  const totalBankDebit = BANK_CATEGORIES.reduce((s, c) => s + (bankByCategory?.[c]?.debit || 0), 0);
-  const openingBalance = month?.openingBalance || 0;
-  const grandTotalIncome = openingBalance + totalIncome + totalBankCredit;
-  const grandTotalCosting = totalCosting + totalBankDebit;
-  const netBalance = totalIncome - totalCosting;
+  // Categories that are paid via bank and should NOT reduce the 'Cash Hand' (Net Balance)
+  const BANK_SIDE_CATEGORIES = [
+    "ব্যাংক এ যাবতীয় জমা (মাস-সাল)",
+  ];
 
-  const maxRows = Math.max(INCOME_CATEGORIES.length, COSTING_CATEGORIES.length);
+  // Categories that should not even appear in the PDF's Expense list
+  const HIDDEN_FROM_LIST = [
+    "ব্যাংক এ যাবতীয় জমা (মাস-সাল)"
+  ];
+
+  const { month, incomeByCategory, costingByCategory, bankCalculated } = summaryData || {};
+  
+  // Calculate total income from all actual categories received
+  const totalIncome = Object.values(incomeByCategory || {}).reduce((s: number, v) => s + (v as number), 0);
+  
+  // 1. Total Costing for the PDF Table rows
+  // This uses the actual values from the object to ensure nothing is missed
+  const totalCosting = Object.entries(costingByCategory || {}).reduce((s: number, [cat, val]) => {
+    if (HIDDEN_FROM_LIST.includes(cat)) return s;
+    return s + (val as number);
+  }, 0);
+
+  // 2. Pure Cash Costing (Excludes all 3 bank items) - used for the Net Balance (Dashboard Sync)
+  // This is the logical 'Liquid Surplus' that matches the dashboard's card
+  const pureCashCosting = Object.entries(costingByCategory || {}).reduce((s: number, [cat, val]) => {
+    if (BANK_SIDE_CATEGORIES.includes(cat)) return s;
+    return s + (val as number);
+  }, 0);
+
+  const filteredCostingCategories = COSTING_CATEGORIES.filter(c => !HIDDEN_FROM_LIST.includes(c));
+
+  const openingBankBalance = BANK_CATEGORIES.reduce((s, c) => s + (bankCalculated?.[c]?.opening || 0), 0);
+  const closingBankBalance = BANK_CATEGORIES.reduce((s, c) => s + (bankCalculated?.[c]?.closing || 0), 0);
+  
+  const cashInitial = month?.openingBalance || 0;
+  // Net Balance (Closing Cash) matches Database EXACTLY
+  const cashClosing = month?.netBalance || 0;
+
+  const grandTotalIncome = totalIncome + (openingBankBalance + cashInitial);
+  const grandTotalCosting = totalCosting + (closingBankBalance + cashClosing);
+
+  const maxRows = Math.max(INCOME_CATEGORIES.length, filteredCostingCategories.length);
   const incomeRows = [...INCOME_CATEGORIES, ...Array(Math.max(0, maxRows - INCOME_CATEGORIES.length)).fill("")];
-  const costingRows = [...COSTING_CATEGORIES, ...Array(Math.max(0, maxRows - COSTING_CATEGORIES.length)).fill("")];
+  const costingRows = [...filteredCostingCategories, ...Array(Math.max(0, maxRows - filteredCostingCategories.length)).fill("")];
 
-  // Shared table cell style strings for the printable area (inline styles only — works in print window)
+  const ORDERED_BANKS = [
+    "প্রিমিয়ার ব্যাংক",
+    "ঢাকা ব্যাংক",
+    ...BANK_CATEGORIES.filter(b => b !== "প্রিমিয়ার ব্যাংক" && b !== "ঢাকা ব্যাংক")
+  ];
+
+  // Shared table cell style strings for the printable area
   const td = (extra = "") => `border:1px solid #000;padding:2px 5px;font-size:10px;line-height:1.4;${extra}`;
 
   return (
@@ -191,28 +231,37 @@ ${node.innerHTML}
                       </tr>
                     </thead>
                     <tbody>
-                      {BANK_CATEGORIES.map((bank, i) => {
-                        const bankData = bankByCategory?.[bank];
-                        const netBank = bankData ? (bankData.credit - bankData.debit) : 0;
-                        return (
-                          <tr key={bank}>
-                            <td style={{ border: "1px solid #000", padding: "2px 5px", fontSize: "10px" }}>{bank}</td>
+                      {(() => {
+                        const allRows: Array<{ name: string; opening: number; closing: number }> = [];
+                        
+                        // Handle the 6 banks
+                        ORDERED_BANKS.forEach((bank, idx) => {
+                          const bankData = bankCalculated?.[bank] || { opening: 0, closing: 0 };
+                          allRows.push({ name: bank, opening: bankData.opening, closing: bankData.closing });
+                        });
+
+                        // Insert "নগদ হাতে জমা" after the second bank (index 1)
+                        allRows.splice(2, 0, { name: "নগদ হাতে জমা", opening: cashInitial, closing: cashClosing });
+
+                        return allRows.map((row, i) => (
+                          <tr key={i}>
+                            <td style={{ border: "1px solid #000", padding: "2px 5px", fontSize: "10px" }}>{row.name}</td>
                             <td style={{ border: "1px solid #000", padding: "2px 5px", textAlign: "right", fontSize: "10px", fontWeight: 600 }}>
-                              {i === 0 && openingBalance > 0 ? formatBanglaAmount(openingBalance) : "—"}
+                              {formatBanglaAmount(row.opening)}
                             </td>
-                            <td style={{ border: "1px solid #000", padding: "2px 5px", fontSize: "10px" }}>{bank}</td>
+                            <td style={{ border: "1px solid #000", padding: "2px 5px", fontSize: "10px" }}>{row.name}</td>
                             <td style={{ border: "1px solid #000", padding: "2px 5px", textAlign: "right", fontSize: "10px", fontWeight: 600 }}>
-                              {netBank !== 0 ? formatBanglaAmount(netBank) : "—"}
+                              {formatBanglaAmount(row.closing)}
                             </td>
                           </tr>
-                        );
-                      })}
+                        ));
+                      })()}
                       <tr>
                         <td colSpan={2} style={{ border: "1px solid #000", padding: "3px 5px", textAlign: "right", fontSize: "10px", fontWeight: 900, color: "#92400e", fontStyle: "italic" }}>
-                          গত মাসে নগদ ও ব্যাংকে মোট: <strong>{formatBanglaAmount(openingBalance)}</strong>
+                          গত মাসে ব্যাংক ও নগদ মোট: <strong>{formatBanglaAmount(openingBankBalance + cashInitial)}</strong>
                         </td>
                         <td colSpan={2} style={{ border: "1px solid #000", padding: "3px 5px", textAlign: "right", fontSize: "10px", fontWeight: 900, color: "#92400e", fontStyle: "italic" }}>
-                          এই মাসে নগদ ও ব্যাংকে মোট: <strong>{formatBanglaAmount(totalBankCredit - totalBankDebit)}</strong>
+                          এই মাসে ব্যাংক ও নগদ মোট: <strong>{formatBanglaAmount(closingBankBalance + cashClosing)}</strong>
                         </td>
                       </tr>
                     </tbody>
@@ -233,7 +282,11 @@ ${node.innerHTML}
                         const incCat = incomeRows[idx];
                         const costCat = costingRows[idx];
                         const incAmt = incCat ? (incomeByCategory?.[incCat] || 0) : 0;
-                        const costAmt = costCat ? (costingByCategory?.[costCat] || 0) : 0;
+                        const costAmt = (() => {
+                          if (!costCat) return 0;
+                          const val = costingByCategory?.[costCat] || 0;
+                          return val as number;
+                        })();
                         const rowBg = idx % 2 === 1 ? "#fafafa" : "#fff";
                         return (
                           <tr key={idx} style={{ background: rowBg }}>
@@ -263,26 +316,10 @@ ${node.innerHTML}
 
                       {/* Grand totals */}
                       <tr style={{ borderTop: "3px double #000" }}>
-                        <td style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "center", fontWeight: 900, background: "#1e293b", color: "#fff", fontSize: "11px" }}>সর্বমোট আয়</td>
+                        <td style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "center", fontWeight: 900, background: "#1e293b", color: "#fff", fontSize: "11px" }}>সর্বমোট টাকা</td>
                         <td style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "right", fontWeight: 900, background: "#1e293b", color: "#fff", fontSize: "11px" }}>{formatBanglaAmount(grandTotalIncome)}</td>
-                        <td style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "center", fontWeight: 900, background: "#1e293b", color: "#fff", fontSize: "11px" }}>সর্বমোট ব্যয়</td>
+                        <td style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "center", fontWeight: 900, background: "#1e293b", color: "#fff", fontSize: "11px" }}>সর্বমোট টাকা</td>
                         <td style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "right", fontWeight: 900, background: "#1e293b", color: "#fff", fontSize: "11px" }}>{formatBanglaAmount(grandTotalCosting)}</td>
-                      </tr>
-
-                      {/* Net balance */}
-                      <tr style={{ background: "#fffbeb" }}>
-                        <td colSpan={2} style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "center", fontWeight: 900, fontSize: "10.5px" }}>
-                          মাসিক নীট উদ্বৃত্ত (আয় − ব্যয়):&nbsp;
-                          <span style={{ color: netBalance >= 0 ? "#15803d" : "#b91c1c", fontSize: "11px" }}>
-                            {formatBanglaAmount(Math.abs(netBalance))} {netBalance >= 0 ? "(উদ্বৃত্ত)" : "(ঘাটতি)"}
-                          </span>
-                        </td>
-                        <td colSpan={2} style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "center", fontWeight: 900, fontSize: "10.5px" }}>
-                          সমাপ্তি নগদ স্থিতি:&nbsp;
-                          <span style={{ color: "#1d4ed8", fontSize: "11px" }}>
-                            {formatBanglaAmount(openingBalance + totalIncome - totalCosting)}
-                          </span>
-                        </td>
                       </tr>
                     </tbody>
                   </table>
