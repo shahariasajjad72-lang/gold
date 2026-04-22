@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { X, Printer, Download, FileText } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
-import { getMonthEndSummary } from "@/lib/actions";
+import { getMonthEndSummary, addTransaction } from "@/lib/actions";
 import { INCOME_CATEGORIES, COSTING_CATEGORIES, BANK_CATEGORIES } from "@/lib/constants";
 import { formatBanglaAmount, toBanglaNumeral } from "@/lib/utils/bangla-date";
 
@@ -21,6 +21,10 @@ export default function MonthEndSummaryModal({ monthId, isOpen, onClose }: Month
   const [isLoading, setIsLoading] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const printAreaRef = useRef<HTMLDivElement>(null);
+  
+  const [showAdjust, setShowAdjust] = useState(false);
+  const [adjustData, setAdjustData] = useState({ category: "", description: "অ্যাডজাস্টমেন্ট এন্ট্রি (Missing Ref)", type: "costing" as "income" | "costing", amount: 0 });
+  const [isAdjusting, setIsAdjusting] = useState(false);
 
   useEffect(() => {
     if (isOpen) fetchData();
@@ -31,6 +35,22 @@ export default function MonthEndSummaryModal({ monthId, isOpen, onClose }: Month
     const data = await getMonthEndSummary(monthId);
     setSummaryData(data);
     setIsLoading(false);
+  };
+
+  const handleAdjustSubmit = async () => {
+    if(!adjustData.category || adjustData.amount <= 0) return alert("Please fill category and amount properly");
+    setIsAdjusting(true);
+    await addTransaction({
+      monthId,
+      type: adjustData.type,
+      category: adjustData.category,
+      amount: adjustData.amount,
+      date: new Date(),
+      description: adjustData.description || "অ্যাডজাস্টমেন্ট এন্ট্রি",
+    });
+    setShowAdjust(false);
+    setIsAdjusting(false);
+    fetchData(); // reload stats
   };
 
   const handlePrint = () => {
@@ -121,13 +141,6 @@ export default function MonthEndSummaryModal({ monthId, isOpen, onClose }: Month
     return s + (val as number);
   }, 0);
 
-  // 2. Pure Cash Costing (Excludes all 3 bank items) - used for the Net Balance (Dashboard Sync)
-  // This is the logical 'Liquid Surplus' that matches the dashboard's card
-  const pureCashCosting = Object.entries(costingByCategory || {}).reduce((s: number, [cat, val]) => {
-    if (BANK_SIDE_CATEGORIES.includes(cat)) return s;
-    return s + (val as number);
-  }, 0);
-
   const filteredCostingCategories = COSTING_CATEGORIES.filter(c => !HIDDEN_FROM_LIST.includes(c));
 
   const openingBankBalance = BANK_CATEGORIES.reduce((s, c) => s + (bankCalculated?.[c]?.opening || 0), 0);
@@ -137,12 +150,17 @@ export default function MonthEndSummaryModal({ monthId, isOpen, onClose }: Month
   // Net Balance (Closing Cash) matches Database EXACTLY
   const cashClosing = month?.netBalance || 0;
 
+  // Grand Total Left = Previous Month Assets (Bank + Cash) + Current Month Income
   const grandTotalIncome = totalIncome + (openingBankBalance + cashInitial);
+  
+  // Grand Total Right = Current Month Assets (Bank + Cash) + Current Month Expense
   const grandTotalCosting = totalCosting + (closingBankBalance + cashClosing);
-
   const maxRows = Math.max(INCOME_CATEGORIES.length, filteredCostingCategories.length);
   const incomeRows = [...INCOME_CATEGORIES, ...Array(Math.max(0, maxRows - INCOME_CATEGORIES.length)).fill("")];
   const costingRows = [...filteredCostingCategories, ...Array(Math.max(0, maxRows - filteredCostingCategories.length)).fill("")];
+
+  const gap = grandTotalIncome - grandTotalCosting;
+  const hasMismatch = Math.abs(gap) > 0;
 
   const ORDERED_BANKS = [
     "প্রিমিয়ার ব্যাংক",
@@ -196,6 +214,82 @@ export default function MonthEndSummaryModal({ monthId, isOpen, onClose }: Month
                 </button>
               </div>
             </div>
+
+            {/* ─── Gap Warning & Adjust Actions ─── */}
+            {!isLoading && hasMismatch && !isCapturing && (
+              <div className="bg-red-50 dark:bg-red-900/20 border-b border-red-200 dark:border-red-900/40 px-6 py-3 flex justify-between items-center shrink-0">
+                <div>
+                  <p className="text-red-700 dark:text-red-400 font-bold text-sm tracking-wide">⚠️ হিসাবের গরমিল পাওয়া গেছে!</p>
+                  <p className="text-red-600 dark:text-red-300 text-[11px] mt-0.5">
+                    রিপোর্টের ডান দিক ও বাম দিকের মাঝে <strong>{formatBanglaAmount(Math.abs(gap))}</strong> টাকার পার্থক্য রয়েছে।
+                  </p>
+                </div>
+                <button 
+                  onClick={() => {
+                    setAdjustData({
+                      type: gap > 0 ? "costing" : "income",
+                      amount: Math.abs(gap),
+                      category: "",
+                      description: "অ্যাডজাস্টমেন্ট এন্ট্রি (Missing Ref)"
+                    });
+                    setShowAdjust(!showAdjust);
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors"
+                >
+                  {showAdjust ? "বাতিল করুন" : "হিসাব সমন্বয় করুন"}
+                </button>
+              </div>
+            )}
+            
+            {/* Adjust Inline Form */}
+            {showAdjust && !isCapturing && (
+              <div className="bg-amber-50 dark:bg-zinc-900 border-b border-amber-200 dark:border-zinc-800 px-6 py-4 flex flex-col gap-3 shrink-0 shadow-sm z-10 relative">
+                <p className="text-sm font-bold text-zinc-800 dark:text-zinc-200">সমন্বয়ের জন্য সঠিক এন্ট্রি দিন (গ্যাপ শূন্য করতে):</p>
+                <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                  <select 
+                    value={adjustData.type}
+                    onChange={(e) => setAdjustData({...adjustData, type: e.target.value as "income"|"costing", category: ""})}
+                    className="border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white rounded p-2 text-xs font-semibold"
+                  >
+                    <option value="income">আয় (INCOME)</option>
+                    <option value="costing">ব্যয় (EXPENSE)</option>
+                  </select>
+                  
+                  <select
+                    value={adjustData.category}
+                    onChange={(e) => setAdjustData({...adjustData, category: e.target.value})}
+                    className="border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white rounded p-2 text-xs font-semibold sm:col-span-2"
+                  >
+                    <option value="">-- ক্যাটাগরি বেছে নিন --</option>
+                    {(adjustData.type === 'income' ? INCOME_CATEGORIES : COSTING_CATEGORIES).filter(c => !HIDDEN_FROM_LIST.includes(c)).map(cat => {
+                      const displayCat = cat.replace(/\(মাস-সাল\)/g, `(${month?.name}-${month?.year})`);
+                      return <option key={cat} value={displayCat}>{displayCat}</option>
+                    })}
+                  </select>
+
+                  <input 
+                    type="number"
+                    value={adjustData.amount || ""}
+                    onChange={(e) => setAdjustData({...adjustData, amount: Number(e.target.value)})}
+                    className="border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white rounded p-2 text-xs font-bold"
+                    placeholder="টাকা"
+                  />
+
+                  <input 
+                    type="text"
+                    value={adjustData.description}
+                    onChange={(e) => setAdjustData({...adjustData, description: e.target.value})}
+                    className="border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white rounded p-2 text-xs"
+                    placeholder="বিবরণ"
+                  />
+                </div>
+                <div className="flex justify-end gap-2 mt-1">
+                  <button onClick={handleAdjustSubmit} disabled={isAdjusting} className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-1.5 rounded-lg text-xs font-bold shadow disabled:opacity-50">
+                    {isAdjusting ? "সেভ হচ্ছে..." : "এন্ট্রি সেভ করুন"}
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* ─── Scrollable Content ─── */}
             <div className="flex-1 overflow-y-auto p-4 lg:p-8">
@@ -287,19 +381,25 @@ export default function MonthEndSummaryModal({ monthId, isOpen, onClose }: Month
                           const val = costingByCategory?.[costCat] || 0;
                           return val as number;
                         })();
+                        const isAdjustmentIncome = incCat && (incCat.includes("ব্যাংক হতে প্রাপ্ত লভ্যাংশ"));
+                        const isAdjustmentCost = costCat && (costCat.includes("ব্যাংক এর মাধ্যমে পেমেন্ট") || costCat.includes("ব্যাংক এর আবগারি শুল্ক"));
+                        
                         const rowBg = idx % 2 === 1 ? "#fafafa" : "#fff";
+                        const incBg = isAdjustmentIncome ? "#f0fdf4" : "transparent"; // Light green for bank income
+                        const costBg = isAdjustmentCost ? "#fff7ed" : "transparent"; // Light orange for bank costing
+                        
                         return (
                           <tr key={idx} style={{ background: rowBg }}>
-                            <td style={{ border: "1px solid #000", padding: "2px 5px", fontSize: "10px" }}>
+                            <td style={{ border: "1px solid #000", padding: "2px 5px", fontSize: "10px", backgroundColor: incBg }}>
                               {incCat ? incCat.replace(/\(মাস-সাল\)/g, "").trim() : ""}
                             </td>
-                            <td style={{ border: "1px solid #000", padding: "2px 5px", textAlign: "right", fontSize: "10px", fontWeight: incAmt > 0 ? 700 : 400 }}>
+                            <td style={{ border: "1px solid #000", padding: "2px 5px", textAlign: "right", fontSize: "10px", fontWeight: incAmt > 0 ? 700 : 400, backgroundColor: incBg }}>
                               {incCat ? (incAmt > 0 ? formatBanglaAmount(incAmt) : "—") : ""}
                             </td>
-                            <td style={{ border: "1px solid #000", padding: "2px 5px", fontSize: "10px" }}>
+                            <td style={{ border: "1px solid #000", padding: "2px 5px", fontSize: "10px", backgroundColor: costBg }}>
                               {costCat ? costCat.replace(/\(মাস-সাল\)/g, "").trim() : ""}
                             </td>
-                            <td style={{ border: "1px solid #000", padding: "2px 5px", textAlign: "right", fontSize: "10px", fontWeight: costAmt > 0 ? 700 : 400 }}>
+                            <td style={{ border: "1px solid #000", padding: "2px 5px", textAlign: "right", fontSize: "10px", fontWeight: costAmt > 0 ? 700 : 400, backgroundColor: costBg }}>
                               {costCat ? (costAmt > 0 ? formatBanglaAmount(costAmt) : "—") : ""}
                             </td>
                           </tr>

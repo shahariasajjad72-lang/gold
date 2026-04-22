@@ -387,12 +387,21 @@ export async function getMonthEndSummary(monthId: number) {
     const costingByCategory: Record<string, number> = {};
 
     monthTransactions.forEach((t) => {
+      // Logic: If the category is a Bank Category, it's a direct bank entry (Transfer/Withdrawal)
+      // and should NOT be counted as Income or Expense in the ledger totals, 
+      // as it's already reflected in the Opening/Closing Bank balances.
+      if (BANK_CATEGORIES.includes(t.category)) return;
+
       const normCat = normalize(t.category);
       if (t.type === "income") {
-        incomeByCategory[normCat] = (incomeByCategory[normCat] || 0) + t.amount;
+        let targetCat = normCat;
+        // Split Nehara from Dust Sale if description contains the keyword
+        if (normCat === "ডাস্ট বিক্রয় হতে আয়" && t.description?.includes("নেহারা")) {
+          targetCat = "নেহারা বিক্রয় হতে আয়";
+        }
+        incomeByCategory[targetCat] = (incomeByCategory[targetCat] || 0) + t.amount;
       } else if (t.type === "costing") {
-        costingByCategory[normCat] =
-          (costingByCategory[normCat] || 0) + t.amount;
+        costingByCategory[normCat] = (costingByCategory[normCat] || 0) + t.amount;
       }
     });
 
