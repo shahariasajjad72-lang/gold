@@ -31,13 +31,13 @@ async function check() {
         like(transactions.category, 'স্টাফ বেতন%'),
         like(transactions.category, 'পরিচালকগণের সম্মানী প্রদান (ব্যাংক)%'),
         like(transactions.category, 'ব্যাংক এ যাবতীয় জমা%')
-      ))
+      )!)
     ));
 
   console.log("Jan Opening Balance:", jan.openingBalance);
   console.log("Jan Income:", Number(income[0]?.total || 0));
   console.log("Jan Cash Costing (Excluding Bank Items):", Number(costing[0]?.total || 0));
-  console.log("Jan Net Balance (Dashboard Logic):", (jan.openingBalance + Number(income[0]?.total || 0)) - Number(costing[0]?.total || 0));
+  console.log("Jan Net Balance (Dashboard Logic):", ((jan.openingBalance ?? 0) + Number(income[0]?.total || 0)) - Number(costing[0]?.total || 0));
 }
 
 check().then(() => process.exit());

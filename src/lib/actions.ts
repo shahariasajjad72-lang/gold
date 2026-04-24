@@ -80,7 +80,7 @@ async function syncMonthTotals(monthId: number) {
       not(or(
         like(transactions.category, 'স্টাফদের বেতন প্রধান (ব্যাংক)%'),
         like(transactions.category, 'পরিচালকগণের সম্মানী প্রদান (ব্যাংক)%')
-      ))
+      )!)
     ));
 
     const totalIncome = Number(incomeResult[0]?.total || 0);
@@ -233,7 +233,7 @@ export async function getMonthlyStatsUpToDate(monthId: number, dateStr: string) 
         not(or(
           like(transactions.category, 'স্টাফদের বেতন প্রধান (ব্যাংক)%'),
           like(transactions.category, 'পরিচালকগণের সম্মানী প্রদান (ব্যাংক)%')
-        )),
+        )!),
         sql`${transactions.date} <= ${selectedDate.toISOString()}`
     ));
 
@@ -275,7 +275,7 @@ export async function getMonthlyStatsBeforeDate(monthId: number, dateStr: string
         not(or(
           like(transactions.category, 'স্টাফদের বেতন প্রধান (ব্যাংক)%'),
           like(transactions.category, 'পরিচালকগণের সম্মানী প্রদান (ব্যাংক)%')
-        )),
+        )!),
         sql`${transactions.date} < ${startOfDay.toISOString()}`
     ));
 
@@ -322,7 +322,7 @@ export async function getMonthlyDailyBreakdown(monthId: number) {
         not(or(
           like(transactions.category, 'স্টাফদের বেতন প্রধান (ব্যাংক)%'),
           like(transactions.category, 'পরিচালকগণের সম্মানী প্রদান (ব্যাংক)%')
-        ))
+        )!)
       ),
       orderBy: [transactions.date],
     });
