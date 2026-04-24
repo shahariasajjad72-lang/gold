@@ -21,6 +21,7 @@ export default function MonthEndSummaryModal({ monthId, isOpen, onClose }: Month
   const [isLoading, setIsLoading] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const printAreaRef = useRef<HTMLDivElement>(null);
+  const [signatureMode, setSignatureMode] = useState<'single' | 'multiple'>('single');
   
   const [showAdjust, setShowAdjust] = useState(false);
   const [adjustData, setAdjustData] = useState({ category: "", description: "অ্যাডজাস্টমেন্ট এন্ট্রি (Missing Ref)", type: "costing" as "income" | "costing", amount: 0 });
@@ -204,6 +205,11 @@ export default function MonthEndSummaryModal({ monthId, isOpen, onClose }: Month
                   className="flex items-center gap-1.5 px-4 py-2 text-[11px] font-bold rounded-xl bg-amber-100 text-amber-800 hover:bg-amber-200 transition-colors disabled:opacity-40 border border-amber-200">
                   <Download className="w-4 h-4" /> ছবি
                 </button>
+                <button onClick={() => setSignatureMode(signatureMode === 'single' ? 'multiple' : 'single')}
+                  className={`flex items-center gap-1.5 px-4 py-2 text-[11px] font-bold rounded-xl transition-all border ${signatureMode === 'multiple' ? 'bg-indigo-600 text-white border-indigo-700' : 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100'}`}>
+                  <FileText className="w-4 h-4" />
+                  {signatureMode === 'single' ? 'সব পরিচালকের স্বাক্ষর' : 'একক স্বাক্ষর'}
+                </button>
                 <button onClick={handlePrint} disabled={isLoading}
                   className="flex items-center gap-1.5 px-4 py-2 text-[11px] font-bold rounded-xl bg-slate-800 text-white hover:bg-slate-700 transition-colors disabled:opacity-40">
                   <Printer className="w-4 h-4" /> প্রিন্ট
@@ -306,22 +312,22 @@ export default function MonthEndSummaryModal({ monthId, isOpen, onClose }: Month
                   style={{ fontFamily: "'Noto Serif Bengali', 'SolaimanLipi', serif", fontSize: "11px", color: "#000", background: "#fff", minWidth: "680px" }}>
 
                   {/* === COMPANY HEADER === */}
-                  <div style={{ textAlign: "center", borderBottom: "3px double #000", paddingBottom: "8px", marginBottom: "10px" }}>
-                    <h1 style={{ fontSize: "16px", fontWeight: 900, margin: 0 }}>{COMPANY_NAME}</h1>
-                    <p style={{ fontSize: "11px", fontWeight: 700, margin: "2px 0 0" }}>এক নজরে মাসিক আয় ও ব্যয়ের বিবরণ</p>
-                    <p style={{ fontSize: "10px", margin: "1px 0 0" }}>
+                  <div style={{ textAlign: "center", borderBottom: "4px double #000", paddingBottom: "6px", marginBottom: "8px" }}>
+                    <h1 style={{ fontSize: "18px", fontWeight: 900, margin: 0, letterSpacing: "1.5px" }}>{COMPANY_NAME}</h1>
+                    <p style={{ fontSize: "11px", fontWeight: 700, margin: "2px 0 0", color: "#374151" }}>এক নজরে মাসিক আয় ও ব্যয়ের বিবরণ</p>
+                    <p style={{ fontSize: "10px", margin: "1px 0 0", color: "#4b5563" }}>
                       ({month?.name} {toBanglaNumeral(month?.year)} সাল)
                     </p>
                   </div>
 
                   {/* === BANK SECTION === */}
-                  <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "4px" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "6px" }}>
                     <thead>
-                      <tr style={{ background: "#f3f4f6" }}>
-                        <th style={{ ...{ border: "1px solid #000", padding: "3px 5px", textAlign: "left", fontSize: "10px", fontWeight: 900, width: "38%" } }}>গত মাসের ব্যাংক ও নগদ স্থিতি</th>
-                        <th style={{ border: "1px solid #000", padding: "3px 5px", textAlign: "right", fontSize: "10px", fontWeight: 900, width: "12%" }}>পরিমাণ</th>
-                        <th style={{ border: "1px solid #000", padding: "3px 5px", textAlign: "left", fontSize: "10px", fontWeight: 900, width: "38%" }}>এই মাসের ব্যাংক ও নগদ স্থিতি</th>
-                        <th style={{ border: "1px solid #000", padding: "3px 5px", textAlign: "right", fontSize: "10px", fontWeight: 900, width: "12%" }}>পরিমাণ</th>
+                      <tr style={{ background: "#f8fafc" }}>
+                        <th style={{ border: "1px solid #000", padding: "3px 6px", textAlign: "left", fontSize: "10px", fontWeight: 900, width: "38%", color: "#000" }}>গত মাসের ব্যাংক ও নগদ স্থিতি</th>
+                        <th style={{ border: "1px solid #000", padding: "3px 6px", textAlign: "right", fontSize: "10px", fontWeight: 900, width: "12%", color: "#000" }}>পরিমাণ</th>
+                        <th style={{ border: "1px solid #000", padding: "3px 6px", textAlign: "left", fontSize: "10px", fontWeight: 900, width: "38%", color: "#000" }}>এই মাসের ব্যাংক ও নগদ স্থিতি</th>
+                        <th style={{ border: "1px solid #000", padding: "3px 6px", textAlign: "right", fontSize: "10px", fontWeight: 900, width: "12%", color: "#000" }}>পরিমাণ</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -364,11 +370,11 @@ export default function MonthEndSummaryModal({ monthId, isOpen, onClose }: Month
                   {/* === MAIN LEDGER: INCOME | COSTING === */}
                   <table style={{ width: "100%", borderCollapse: "collapse" }}>
                     <thead>
-                      <tr style={{ background: "#1e293b", color: "#fff" }}>
-                        <th style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "center", fontSize: "10px", fontWeight: 900, width: "40%" }}>আয়ের বিবরণ (INCOME)</th>
-                        <th style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "right", fontSize: "10px", fontWeight: 900, width: "10%" }}>টাকা</th>
-                        <th style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "center", fontSize: "10px", fontWeight: 900, width: "40%" }}>ব্যয়ের বিবরণ (EXPENSE)</th>
-                        <th style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "right", fontSize: "10px", fontWeight: 900, width: "10%" }}>টাকা</th>
+                      <tr style={{ background: "#f1f5f9" }}>
+                        <th style={{ border: "1px solid #000", padding: "5px 6px", textAlign: "center", fontSize: "11px", fontWeight: 900, width: "40%", color: "#000" }}>আয়ের বিবরণ (INCOME)</th>
+                        <th style={{ border: "1px solid #000", padding: "5px 6px", textAlign: "right", fontSize: "11px", fontWeight: 900, width: "10%", color: "#000" }}>টাকা</th>
+                        <th style={{ border: "1px solid #000", padding: "5px 6px", textAlign: "center", fontSize: "11px", fontWeight: 900, width: "40%", color: "#000" }}>ব্যয়ের বিবরণ (EXPENSE)</th>
+                        <th style={{ border: "1px solid #000", padding: "5px 6px", textAlign: "right", fontSize: "11px", fontWeight: 900, width: "10%", color: "#000" }}>টাকা</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -390,52 +396,96 @@ export default function MonthEndSummaryModal({ monthId, isOpen, onClose }: Month
                         
                         return (
                           <tr key={idx} style={{ background: rowBg }}>
-                            <td style={{ border: "1px solid #000", padding: "2px 5px", fontSize: "10px", backgroundColor: incBg }}>
+                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", fontSize: "9.5px", backgroundColor: incBg }}>
                               {incCat ? incCat.replace(/\(মাস-সাল\)/g, "").trim() : ""}
                             </td>
-                            <td style={{ border: "1px solid #000", padding: "2px 5px", textAlign: "right", fontSize: "10px", fontWeight: incAmt > 0 ? 700 : 400, backgroundColor: incBg }}>
+                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", textAlign: "right", fontSize: "9.5px", fontWeight: incAmt > 0 ? 700 : 400, backgroundColor: incBg }}>
                               {incCat ? (incAmt > 0 ? formatBanglaAmount(incAmt) : "—") : ""}
                             </td>
-                            <td style={{ border: "1px solid #000", padding: "2px 5px", fontSize: "10px", backgroundColor: costBg }}>
+                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", fontSize: "9.5px", backgroundColor: costBg }}>
                               {costCat ? costCat.replace(/\(মাস-সাল\)/g, "").trim() : ""}
                             </td>
-                            <td style={{ border: "1px solid #000", padding: "2px 5px", textAlign: "right", fontSize: "10px", fontWeight: costAmt > 0 ? 700 : 400, backgroundColor: costBg }}>
+                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", textAlign: "right", fontSize: "9.5px", fontWeight: costAmt > 0 ? 700 : 400, backgroundColor: costBg }}>
                               {costCat ? (costAmt > 0 ? formatBanglaAmount(costAmt) : "—") : ""}
                             </td>
                           </tr>
                         );
                       })}
 
-                      {/* Subtotals */}
+                      {/* Subtotals (Symmetrical side-by-side) */}
                       <tr style={{ borderTop: "2px solid #000" }}>
-                        <td style={{ border: "1px solid #000", padding: "3px 5px", textAlign: "right", fontWeight: 900, color: "#92400e", fontStyle: "italic", fontSize: "10px" }}>মোট আয়:</td>
-                        <td style={{ border: "1px solid #000", padding: "3px 5px", textAlign: "right", fontWeight: 900, color: "#92400e", fontSize: "10px" }}>{formatBanglaAmount(totalIncome)}</td>
-                        <td style={{ border: "1px solid #000", padding: "3px 5px", textAlign: "right", fontWeight: 900, color: "#92400e", fontStyle: "italic", fontSize: "10px" }}>মোট ব্যয়:</td>
-                        <td style={{ border: "1px solid #000", padding: "3px 5px", textAlign: "right", fontWeight: 900, color: "#92400e", fontSize: "10px" }}>{formatBanglaAmount(totalCosting)}</td>
+                        <td colSpan={2} style={{ border: "1px solid #000", padding: "4px 8px", textAlign: "right", fontWeight: 900, color: "#92400e", fontStyle: "italic", fontSize: "11px" }}>
+                          মোট আয়ের বিবরণ: <strong>{formatBanglaAmount(totalIncome)}</strong>
+                        </td>
+                        <td colSpan={2} style={{ border: "1px solid #000", padding: "4px 8px", textAlign: "right", fontWeight: 900, color: "#92400e", fontStyle: "italic", fontSize: "11px" }}>
+                          মোট ব্যয়ের বিবরণ: <strong>{formatBanglaAmount(totalCosting)}</strong>
+                        </td>
                       </tr>
 
-                      {/* Grand totals */}
-                      <tr style={{ borderTop: "3px double #000" }}>
-                        <td style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "center", fontWeight: 900, background: "#1e293b", color: "#fff", fontSize: "11px" }}>সর্বমোট টাকা</td>
-                        <td style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "right", fontWeight: 900, background: "#1e293b", color: "#fff", fontSize: "11px" }}>{formatBanglaAmount(grandTotalIncome)}</td>
-                        <td style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "center", fontWeight: 900, background: "#1e293b", color: "#fff", fontSize: "11px" }}>সর্বমোট টাকা</td>
-                        <td style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "right", fontWeight: 900, background: "#1e293b", color: "#fff", fontSize: "11px" }}>{formatBanglaAmount(grandTotalCosting)}</td>
+                      {/* Grand totals (Symmetrical side-by-side) */}
+                      <tr style={{ borderTop: "4px double #000" }}>
+                        <td colSpan={2} style={{ border: "1px solid #000", padding: "10px 8px", textAlign: "right", fontWeight: 900, background: "#f8fafc", color: "#1e40af", fontStyle: "italic", fontSize: "12px" }}>
+                          সর্বমোট আয় (ব্যলান্স সহ): <strong>{formatBanglaAmount(grandTotalIncome)}</strong>
+                        </td>
+                        <td colSpan={2} style={{ border: "1px solid #000", padding: "10px 8px", textAlign: "right", fontWeight: 900, background: "#f1f5f9", color: "#1e40af", fontStyle: "italic", fontSize: "12px" }}>
+                          সর্বমোট ব্যয় (ব্যলান্স সহ): <strong>{formatBanglaAmount(grandTotalCosting)}</strong>
+                        </td>
                       </tr>
                     </tbody>
                   </table>
 
-                  {/* Footer */}
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "28px", paddingTop: "8px", borderTop: "1px dashed #9ca3af" }}>
-                    <div style={{ display: "flex", gap: "48px", fontSize: "9px", color: "#6b7280", fontWeight: 700, textTransform: "uppercase" }}>
-                      <div style={{ textAlign: "center" }}>
-                        <div style={{ borderTop: "1px solid #000", marginTop: "32px", paddingTop: "4px", paddingLeft: "20px", paddingRight: "20px" }}>হিসাব রক্ষক</div>
+                  {/* Footer (Conditional Signature Section) */}
+                  <div style={{ marginTop: "20px" }}>
+                    {signatureMode === 'single' ? (
+                      /* SINGLE MD SIGNATURE */
+                      <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "12px", borderTop: "1.5px solid #000" }}>
+                        <div style={{ fontSize: "11px", color: "#000", fontWeight: 700, textAlign: "center" }}>
+                          <div style={{ borderTop: "1.5px solid #000", marginTop: "40px", paddingTop: "8px", minWidth: "220px", lineHeight: "1.6" }}>
+                            <p style={{ margin: 0, fontWeight: 900, fontSize: "13px" }}>এনামুল হক খান</p>
+                            <p style={{ margin: 0 }}>ব্যবস্থাপনা পরিচালক</p>
+                            <p style={{ margin: 0, fontWeight: 900 }}>বাংলা গোল্ড (প্রা:) লিমিটেড</p>
+                          </div>
+                        </div>
                       </div>
-                      <div style={{ textAlign: "center" }}>
-                        <div style={{ borderTop: "1px solid #000", marginTop: "32px", paddingTop: "4px", paddingLeft: "20px", paddingRight: "20px" }}>পরিচালক</div>
+                    ) : (
+                      /* MULTIPLE DIRECTORS TABLE */
+                      <div style={{ borderTop: "1.5px solid #000", paddingTop: "8px" }}>
+                        <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #000" }}>
+                          <thead style={{ backgroundColor: "#b8d0e8" }}>
+                            <tr style={{ borderBottom: "1.5px solid #000" }}>
+                              <th style={{ border: "1px solid #000", padding: "4px", textAlign: "center", fontSize: "10.5px", fontWeight: 900, width: "35%" }}>পরিচালকের নাম</th>
+                              <th style={{ border: "1px solid #000", padding: "4px", textAlign: "center", fontSize: "10.5px", fontWeight: 900, width: "25%" }}>পদবী</th>
+                              <th style={{ border: "1px solid #000", padding: "4px", textAlign: "center", fontSize: "10.5px", fontWeight: 900, width: "15%" }}>তারিখ</th>
+                              <th style={{ border: "1px solid #000", padding: "4px", textAlign: "center", fontSize: "10.5px", fontWeight: 900, width: "25%" }}>স্বাক্ষর</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[
+                              { name: "জনাব কাজী সিরাজুল ইসলাম", role: "চেয়ারম্যান" },
+                              { name: "জনাব গঙ্গা চরণ মালাকার", role: "ভাইস-চেয়ারম্যান" },
+                              { name: "জনাব ডা: দিলীপ কুমার রায়", role: "ভাইস-চেয়ারম্যান" },
+                              { name: "জনাব এনামুল হক খান", role: "ব্যবস্থাপনা পরিচালক" },
+                              { name: "জনাব রণজিত ঘোষ", role: "পরিচালক" },
+                              { name: "জনাব মো: মিজানুর রহমান", role: "পরিচালক" },
+                              { name: "জনাব ভোলানাথ ঘোষ", role: "পরিচালক" },
+                              { name: "জনাব মো: বাবুল মিয়া", role: "পরিচালক" },
+                            ].map((dir, idx) => (
+                              <tr key={idx}>
+                                <td style={{ border: "1px solid #000", padding: "2.5px 8px", fontSize: "9.5px", fontWeight: 700 }}>{dir.name}</td>
+                                <td style={{ border: "1px solid #000", padding: "2.5px 8px", fontSize: "9.5px", textAlign: "center" }}>{dir.role}</td>
+                                <td style={{ border: "1px solid #000", padding: "2.5px 8px" }}></td>
+                                <td style={{ border: "1px solid #000", padding: "2.5px 8px" }}></td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
-                    </div>
-                    <div style={{ fontSize: "8px", color: "#9ca3af", fontStyle: "italic", textAlign: "right" }}>
-                      প্রিন্ট: {toBanglaNumeral(format(new Date(), "dd-MM-yyyy hh:mm a"))}
+                    )}
+                  </div>
+
+                  <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "6px" }}>
+                    <div style={{ fontSize: "8.5px", color: "#6b7280", fontStyle: "italic", fontWeight: 600 }}>
+                      প্রিন্ট তারিখ: {toBanglaNumeral(format(new Date(), "dd-MM-yyyy hh:mm a"))}
                     </div>
                   </div>
                 </div>

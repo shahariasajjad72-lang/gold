@@ -397,7 +397,7 @@ export async function getMonthEndSummary(monthId: number) {
         let targetCat = normCat;
         // Split Nehara from Dust Sale if description contains the keyword
         if (normCat === "ডাস্ট বিক্রয় হতে আয়" && t.description?.includes("নেহারা")) {
-          targetCat = "নেহারা বিক্রয় হতে আয়";
+          targetCat = "নেহারা হতে প্রাপ্ত আয়";
         }
         incomeByCategory[targetCat] = (incomeByCategory[targetCat] || 0) + t.amount;
       } else if (t.type === "costing") {
