@@ -236,30 +236,30 @@ export default function MonthlyReportModal({
                       <div className="overflow-x-auto custom-scrollbar w-full">
                         <table className="w-full text-left border-collapse table-fixed min-w-[500px]">
                           <thead>
-                          <tr className="bg-slate-900 text-white">
-                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-r border-slate-700">তারিখ</th>
-                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-r border-slate-700 text-right">আগের স্থিতি</th>
-                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-r border-slate-700 text-right">আয়</th>
-                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-r border-slate-700 text-right">ব্যয়</th>
-                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 text-right">বর্তমান স্থিতি</th>
+                          <tr className="bg-slate-100 text-slate-700 dark:bg-zinc-900 dark:text-zinc-300">
+                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-b border-slate-200 dark:border-zinc-800">তারিখ</th>
+                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-b border-slate-200 dark:border-zinc-800 text-right">আগের স্থিতি</th>
+                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-b border-slate-200 dark:border-zinc-800 text-right">আয়</th>
+                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-b border-slate-200 dark:border-zinc-800 text-right">ব্যয়</th>
+                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-b border-slate-200 dark:border-zinc-800 text-right">বর্তমান স্থিতি</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                           {reportData.map((day, idx) => (
-                            <tr key={idx} className="hover:bg-slate-50 transition-colors even:bg-slate-50/30">
-                              <td className="px-4 py-3 font-black text-xs border-r border-slate-100">
+                            <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-zinc-900/50 transition-colors even:bg-slate-50/50 dark:even:bg-zinc-900/30">
+                              <td className="px-4 py-3 font-black text-xs border-b border-slate-100 dark:border-zinc-800">
                                 {formatBanglaDate(day.date)}
                               </td>
-                              <td className="px-4 py-3 font-bold text-sm text-right border-r border-slate-100 text-slate-500">
+                              <td className="px-4 py-3 font-bold text-sm text-right border-b border-slate-100 dark:border-zinc-800 text-slate-500">
                                 {formatBanglaAmount(day.opening)}
                               </td>
-                              <td className="px-4 py-3 font-black text-sm text-right border-r border-slate-100 text-emerald-600">
+                              <td className="px-4 py-3 font-black text-sm text-right border-b border-slate-100 dark:border-zinc-800 text-emerald-600">
                                 + {formatBanglaAmount(day.income)}
                               </td>
-                              <td className="px-4 py-3 font-black text-sm text-right border-r border-slate-100 text-rose-600">
+                              <td className="px-4 py-3 font-black text-sm text-right border-b border-slate-100 dark:border-zinc-800 text-rose-600">
                                 - {formatBanglaAmount(day.costing)}
                               </td>
-                              <td className="px-4 py-3 font-black text-base text-right bg-slate-50/50">
+                              <td className="px-4 py-3 font-black text-base text-right border-b border-slate-100 dark:border-zinc-800 bg-slate-50/50 dark:bg-transparent">
                                 {formatBanglaAmount(day.closing)}
                               </td>
                             </tr>

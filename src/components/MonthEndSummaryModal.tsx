@@ -309,13 +309,18 @@ export default function MonthEndSummaryModal({ monthId, isOpen, onClose }: Month
                    PRINTABLE AREA — inline styles only inside here
                    ================================================ */
                 <div ref={printAreaRef}
-                  style={{ fontFamily: "'Noto Serif Bengali', 'SolaimanLipi', serif", fontSize: "11px", color: "#000", background: "#fff", minWidth: "680px" }}>
+                  style={{ position: "relative", fontFamily: "'Noto Serif Bengali', 'SolaimanLipi', serif", fontSize: "11px", color: "#000", background: "#fff", minWidth: "680px", padding: "20px" }}>
+                  
+                  {/* Watermark Overlay */}
+                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10, pointerEvents: "none" }}>
+                    <img src="/logo.png" style={{ width: "600px", opacity: 0.08, filter: "grayscale(100%)" }} alt="Watermark" />
+                  </div>
 
                   {/* === COMPANY HEADER === */}
-                  <div style={{ textAlign: "center", borderBottom: "4px double #000", paddingBottom: "6px", marginBottom: "8px" }}>
-                    <h1 style={{ fontSize: "18px", fontWeight: 900, margin: 0, letterSpacing: "1.5px" }}>{COMPANY_NAME}</h1>
-                    <p style={{ fontSize: "11px", fontWeight: 700, margin: "2px 0 0", color: "#374151" }}>এক নজরে মাসিক আয় ও ব্যয়ের বিবরণ</p>
-                    <p style={{ fontSize: "10px", margin: "1px 0 0", color: "#4b5563" }}>
+                  <div style={{ textAlign: "center", borderBottom: "3px solid #000", paddingBottom: "10px", marginBottom: "12px", position: "relative", zIndex: 1 }}>
+                    <h1 style={{ fontSize: "22px", fontWeight: 900, margin: 0, letterSpacing: "2px", textTransform: "uppercase" }}>{COMPANY_NAME}</h1>
+                    <p style={{ fontSize: "12px", fontWeight: 700, margin: "4px 0 0", color: "#1f2937", borderTop: "1px solid #000", display: "inline-block", paddingTop: "2px" }}>এক নজরে মাসিক আয় ও ব্যয়ের বিবরণ</p>
+                    <p style={{ fontSize: "11px", margin: "2px 0 0", color: "#4b5563", fontWeight: 600 }}>
                       ({month?.name} {toBanglaNumeral(month?.year)} সাল)
                     </p>
                   </div>
@@ -387,25 +392,20 @@ export default function MonthEndSummaryModal({ monthId, isOpen, onClose }: Month
                           const val = costingByCategory?.[costCat] || 0;
                           return val as number;
                         })();
-                        const isAdjustmentIncome = incCat && (incCat.includes("ব্যাংক হতে প্রাপ্ত লভ্যাংশ"));
-                        const isAdjustmentCost = costCat && (costCat.includes("ব্যাংক এর মাধ্যমে পেমেন্ট") || costCat.includes("ব্যাংক এর আবগারি শুল্ক"));
-                        
-                        const rowBg = idx % 2 === 1 ? "#fafafa" : "#fff";
-                        const incBg = isAdjustmentIncome ? "#f0fdf4" : "transparent"; // Light green for bank income
-                        const costBg = isAdjustmentCost ? "#fff7ed" : "transparent"; // Light orange for bank costing
+                        const rowBg = idx % 2 === 1 ? "#f8fafc" : "#ffffff";
                         
                         return (
                           <tr key={idx} style={{ background: rowBg }}>
-                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", fontSize: "9.5px", backgroundColor: incBg }}>
+                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", fontSize: "9.5px" }}>
                               {incCat ? incCat.replace(/\(মাস-সাল\)/g, "").trim() : ""}
                             </td>
-                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", textAlign: "right", fontSize: "9.5px", fontWeight: incAmt > 0 ? 700 : 400, backgroundColor: incBg }}>
+                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", textAlign: "right", fontSize: "9.5px", fontWeight: incAmt > 0 ? 700 : 400 }}>
                               {incCat ? (incAmt > 0 ? formatBanglaAmount(incAmt) : "—") : ""}
                             </td>
-                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", fontSize: "9.5px", backgroundColor: costBg }}>
+                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", fontSize: "9.5px" }}>
                               {costCat ? costCat.replace(/\(মাস-সাল\)/g, "").trim() : ""}
                             </td>
-                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", textAlign: "right", fontSize: "9.5px", fontWeight: costAmt > 0 ? 700 : 400, backgroundColor: costBg }}>
+                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", textAlign: "right", fontSize: "9.5px", fontWeight: costAmt > 0 ? 700 : 400 }}>
                               {costCat ? (costAmt > 0 ? formatBanglaAmount(costAmt) : "—") : ""}
                             </td>
                           </tr>

@@ -1,6 +1,6 @@
 'use client';
 
-import { Folder, ChevronRight, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, ArrowRight, Wallet } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { formatBanglaAmount, toBanglaNumeral } from '@/lib/utils/bangla-date';
@@ -14,51 +14,67 @@ interface MonthCardProps {
 }
 
 export default function MonthCard({ id, name, year, income, costing }: MonthCardProps) {
+  const net = income - costing;
+
   return (
     <motion.div
-      whileHover={{ y: -4, scale: 1.01 }}
+      whileHover={{ y: -6, scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       className="group h-full"
     >
       <Link href={`/month/${id}`} className="block relative h-full">
-        {/* Minimal Folder Tab */}
-        <div className="absolute -top-2.5 left-6 w-12 h-3 bg-muted border border-b-0 border-border rounded-t-lg group-hover:bg-foreground group-hover:border-foreground transition-all duration-300" />
-        
-        <div className="bg-white dark:bg-black rounded-[32px] p-7 lg:p-9 border border-border group-hover:border-primary group-hover:bg-primary/[0.02] transition-all duration-300 h-full flex flex-col shadow-sm group-hover:shadow-xl group-hover:shadow-primary/5">
-          <div className="flex justify-between items-start mb-8">
-            <div className="p-3 rounded-2xl bg-muted text-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-sm group-hover:shadow-md">
-              <Folder className="w-5 h-5" fill="currentColor" fillOpacity={0.2} />
+        <div className="relative overflow-hidden rounded-[32px] p-6 lg:p-8 bg-slate-900 dark:bg-[#0a0a0a] text-white border-2 border-slate-800 dark:border-zinc-800 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] group-hover:border-indigo-500/50 group-hover:shadow-[0_20px_50px_-10px_rgba(99,102,241,0.4)] transition-all duration-500 h-full flex flex-col z-10">
+          
+          {/* Glowing Orb Background */}
+          <div className="absolute -top-24 -right-24 w-64 h-64 bg-indigo-500 rounded-full mix-blend-screen filter blur-[80px] opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
+          <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-emerald-500 rounded-full mix-blend-screen filter blur-[80px] opacity-10 group-hover:opacity-30 transition-opacity duration-500" />
+
+          {/* Card Header */}
+          <div className="flex justify-between items-start mb-6 relative z-10">
+            <div className="flex items-center gap-2">
+              <Wallet className="w-6 h-6 text-indigo-400" />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Monthly Ledger</span>
             </div>
             <div className="text-right">
-              <h3 className="text-xl lg:text-3xl font-black tracking-tight text-foreground">{name}</h3>
-              <p className="text-xs lg:text-sm font-bold text-muted-foreground uppercase tracking-widest mt-1">{toBanglaNumeral(year.toString())}</p>
+              <h3 className="text-xl lg:text-2xl font-black tracking-tight">{name}</h3>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5">{toBanglaNumeral(year.toString())}</p>
             </div>
           </div>
 
-          <div className="mt-auto space-y-4">
-            <div className="flex items-center justify-between py-2 border-b border-border/50">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <ArrowUpRight className="w-4 h-4" />
-                <span className="text-xs font-bold uppercase tracking-tight">Income</span>
-              </div>
-              <span className="text-sm font-black text-foreground">
-                {income > 0 ? `৳${formatBanglaAmount(income)}` : '৳০'}
-              </span>
-            </div>
-            
-            <div className="flex items-center justify-between py-2">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <ArrowDownRight className="w-4 h-4" />
-                <span className="text-xs font-bold uppercase tracking-tight">Costing</span>
-              </div>
-              <span className="text-sm font-black text-foreground">
-                {costing > 0 ? `৳${formatBanglaAmount(costing)}` : '৳০'}
-              </span>
-            </div>
+          {/* Main Balance (Like a Card Number) */}
+          <div className="my-6 relative z-10">
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-500 mb-2">Monthly Net Flow</p>
+            <h2 className="text-3xl lg:text-4xl font-black tracking-tighter tabular-nums drop-shadow-md">
+              {net >= 0 ? '+' : '-'} ৳{formatBanglaAmount(Math.abs(net))}
+            </h2>
           </div>
 
-          <div className="mt-6 flex items-center justify-end text-[10px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">
-            <ChevronRight className="w-4 h-4" />
+          {/* Footer Stats */}
+          <div className="mt-auto pt-6 border-t border-slate-800/50 flex justify-between items-end relative z-10">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-full bg-emerald-500/20 text-emerald-400">
+                  <TrendingUp className="w-3 h-3" />
+                </div>
+                <div>
+                  <p className="text-[8px] font-black uppercase tracking-widest text-slate-500">Income</p>
+                  <p className="text-xs font-bold">৳{formatBanglaAmount(income)}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-full bg-rose-500/20 text-rose-400">
+                  <TrendingDown className="w-3 h-3" />
+                </div>
+                <div>
+                  <p className="text-[8px] font-black uppercase tracking-widest text-slate-500">Expense</p>
+                  <p className="text-xs font-bold">৳{formatBanglaAmount(costing)}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-12 h-12 rounded-2xl bg-indigo-500 text-white flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-indigo-400 transition-all">
+              <ArrowRight className="w-5 h-5" />
+            </div>
           </div>
         </div>
       </Link>

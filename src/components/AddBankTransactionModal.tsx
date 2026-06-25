@@ -17,10 +17,14 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { addTransaction } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { BANK_CATEGORIES } from '@/lib/constants';
+import SearchableSelect from './SearchableSelect';
 
 interface AddBankTransactionModalProps {
   monthId: number;
+  monthName: string;
+  monthYear: number;
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
@@ -28,6 +32,8 @@ interface AddBankTransactionModalProps {
 
 export default function AddBankTransactionModal({ 
   monthId, 
+  monthName,
+  monthYear,
   isOpen, 
   onClose, 
   onSuccess 
@@ -43,6 +49,23 @@ export default function AddBankTransactionModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!amount) return;
+
+    // Date Validation
+    const monthIndexMap: Record<string, number> = {
+      January: 0, February: 1, March: 2, April: 3, May: 4, June: 5,
+      July: 6, August: 7, September: 8, October: 9, November: 10, December: 11
+    };
+    
+    const selectedDate = new Date(date);
+    const expectedMonthIndex = monthIndexMap[monthName];
+    
+    if (selectedDate.getFullYear() !== monthYear || selectedDate.getMonth() !== expectedMonthIndex) {
+      toast.error(`অ্যামাউন্টটি ${monthName} ${monthYear} এর হিসাবে সেভ করা হচ্ছে। দয়া করে তারিখটি ${monthName} ${monthYear} এর মধ্যেই সিলেক্ট করুন।`, {
+        duration: 5000,
+        style: { fontSize: '14px', fontWeight: 'bold' }
+      });
+      return;
+    }
 
     setIsLoading(true);
     const res = await addTransaction({
@@ -68,7 +91,7 @@ export default function AddBankTransactionModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -78,10 +101,10 @@ export default function AddBankTransactionModal({
       />
       
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: 100 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative w-full max-w-lg bg-white/90 dark:bg-[#050505]/90 backdrop-blur-xl rounded-[32px] sm:rounded-[40px] border border-white/20 dark:border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col max-h-[96vh]"
+        exit={{ opacity: 0, scale: 0.95, y: 100 }}
+        className="relative w-full max-w-lg bg-white/95 dark:bg-[#050505]/95 backdrop-blur-xl rounded-t-[32px] sm:rounded-[40px] border border-white/20 dark:border-white/10 shadow-[0_-8px_32px_-16px_rgba(0,0,0,0.3)] sm:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col max-h-[90vh] pb-safe"
       >
         <div className="relative p-6 md:p-8 overflow-y-auto custom-scrollbar">
           <div className="flex justify-between items-start mb-6 md:mb-8">
@@ -144,21 +167,15 @@ export default function AddBankTransactionModal({
             </div>
 
             {/* Category Selection */}
-            <div className="space-y-2">
+            <div className="space-y-2 z-40 relative">
               <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">ব্যাংক হিসাব (Bank Account)</label>
-              <div className="relative group">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg bg-muted text-muted-foreground group-focus-within:text-foreground transition-colors">
-                  <Building2 className="w-4 h-4" />
-                </div>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full pl-14 pr-12 py-3.5 sm:py-4 rounded-2xl bg-muted/30 border border-border/50 focus:border-foreground focus:bg-background outline-none font-bold text-sm appearance-none transition-all cursor-pointer"
-                >
-                  {BANK_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-                </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none group-focus-within:rotate-180 transition-transform duration-300" />
-              </div>
+              <SearchableSelect
+                icon={<Building2 className="w-4 h-4" />}
+                value={category}
+                onChange={(val) => setCategory(val)}
+                options={BANK_CATEGORIES.map(cat => ({ value: cat, label: cat }))}
+                placeholder="Select bank account..."
+              />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -184,6 +201,8 @@ export default function AddBankTransactionModal({
                   <input
                     type="number"
                     required
+                    inputMode="decimal"
+                    pattern="[0-9]*"
                     placeholder="0.00"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}

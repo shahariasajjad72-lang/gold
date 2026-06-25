@@ -351,17 +351,17 @@ export default function BankTransactionTable({
         </button>
       </div>
 
-      <div className="w-full bg-white dark:bg-black rounded-xl border border-border shadow-sm overflow-hidden text-foreground">
-        <div className="overflow-x-auto">
+      <div className="w-full bg-white dark:bg-[#0a0a0a] rounded-[24px] lg:rounded-[32px] border-2 border-blue-100 dark:border-blue-900/30 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none overflow-hidden text-foreground transition-all">
+        <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full text-left border-collapse print-table">
             <thead>
-              <tr className="bg-slate-50 dark:bg-zinc-900/50 border-b border-border">
-                <th className="px-5 lg:px-8 py-4 lg:py-6 text-[11px] lg:text-[14px] font-black uppercase tracking-wider text-slate-500 border-r border-border/50 w-36 lg:w-48">তারিখ (Date)</th>
-                <th className="px-5 lg:px-8 py-4 lg:py-6 text-[11px] lg:text-[14px] font-black uppercase tracking-wider text-slate-500 border-r border-border/50">বিবরণ (Description)</th>
-                <th className="px-5 lg:px-8 py-4 lg:py-6 text-[11px] lg:text-[14px] font-black uppercase tracking-wider text-slate-500 border-r border-border/50 w-32 lg:w-44">ধরন (Type)</th>
-                <th className="px-5 lg:px-8 py-4 lg:py-6 text-[11px] lg:text-[14px] font-black uppercase tracking-wider text-rose-500 border-r border-border/50 w-40 lg:w-56">ডেবিট (Withdrawal)</th>
-                <th className="px-5 lg:px-8 py-4 lg:py-6 text-[11px] lg:text-[14px] font-black uppercase tracking-wider text-emerald-600 border-r border-border/50 w-40 lg:w-56">ক্রেডিট (Deposit)</th>
-                <th className="px-5 lg:px-8 py-4 lg:py-6 text-[11px] lg:text-[14px] font-black uppercase tracking-wider text-slate-500 w-24 text-right no-print">অ্যাকশন</th>
+              <tr className="border-b-2 border-border/50 bg-blue-50/50 dark:bg-blue-950/20 transition-colors">
+                <th className="px-5 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground border-r border-border/30 w-36 lg:w-48">তারিখ (Date)</th>
+                <th className="px-5 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground border-r border-border/30">বিবরণ (Description)</th>
+                <th className="px-5 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground border-r border-border/30 w-32 lg:w-44 text-center">ধরন (Type)</th>
+                <th className="px-5 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground border-r border-border/30 w-40 lg:w-48 text-right">ডেবিট (Debit)</th>
+                <th className="px-5 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground border-r border-border/30 w-40 lg:w-48 text-right">ক্রেডিট (Credit)</th>
+                <th className="px-5 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground w-28 text-center no-print">অ্যাকশন</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
@@ -420,7 +420,7 @@ export default function BankTransactionTable({
                         </span>
                       )}
                     </td>
-                    <td className="px-5 py-4 border-r border-border/30 text-rose-600 font-bold">
+                    <td className="px-5 py-4 border-r border-border/30 text-rose-600 font-black text-right">
                       {editingId === item.id ? (
                         <div className="flex flex-col gap-1">
                           <input 
@@ -431,34 +431,34 @@ export default function BankTransactionTable({
                           />
                         </div>
                       ) : (
-                        item.type === 'costing' ? `৳ ${formatBanglaAmount(item.amount)}` : '-'
+                        item.type === 'costing' ? <span className="text-base lg:text-2xl tracking-tighter">৳ {formatBanglaAmount(item.amount)}</span> : '-'
                       )}
                     </td>
-                    <td className="px-5 py-4 border-r border-border/30 text-emerald-600 font-bold">
+                    <td className="px-5 py-4 border-r border-border/30 text-emerald-600 font-black text-right">
                        {editingId === item.id ? (
                         <span className="text-[10px] opacity-40 italic">Linked to Amount</span>
                        ) : (
-                        item.type === 'income' ? `৳ ${formatBanglaAmount(item.amount)}` : '-'
+                        item.type === 'income' ? <span className="text-base lg:text-2xl tracking-tighter">৳ {formatBanglaAmount(item.amount)}</span> : '-'
                        )}
                     </td>
-                    <td className="px-5 py-4 text-right no-print">
-                      <div className="flex items-center justify-end gap-1.5">
+                    <td className="px-5 py-4 text-center no-print">
+                      <div className="flex items-center justify-center gap-1.5">
                         {editingId === item.id ? (
                           <>
-                            <button onClick={() => handleSaveEdit(item.id)} className="p-1.5 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-black hover:opacity-80">
-                              <Check className="w-3.5 h-3.5" />
+                            <button onClick={() => handleSaveEdit(item.id)} className="p-2 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-black hover:opacity-80 transition-opacity">
+                              <Check className="w-4 h-4" />
                             </button>
-                            <button onClick={() => setEditingId(null)} className="p-1.5 rounded-lg border border-border">
-                              <X className="w-3.5 h-3.5" />
+                            <button onClick={() => setEditingId(null)} className="p-2 rounded-xl border border-border hover:bg-muted transition-colors">
+                              <X className="w-4 h-4" />
                             </button>
                           </>
                         ) : (
                           <>
-                            <button onClick={() => startEditing(item)} className="p-2 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-                              <Edit2 className="w-3.5 h-3.5" />
+                            <button onClick={() => startEditing(item)} className="p-2 rounded-xl text-muted-foreground hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors">
+                              <Edit2 className="w-4 h-4" />
                             </button>
-                            <button onClick={() => handleDelete(item.id)} className="p-2 rounded-lg text-slate-400 hover:text-red-500 transition-colors">
-                              <Trash2 className="w-3.5 h-3.5" />
+                            <button onClick={() => handleDelete(item.id)} className="p-2 rounded-xl text-muted-foreground hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors">
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </>
                         )}
@@ -469,13 +469,13 @@ export default function BankTransactionTable({
               </AnimatePresence>
 
               {/* Add New Row */}
-              <tr className="bg-slate-50/80 dark:bg-zinc-900/80 no-print border-t-2 border-border/80">
+              <tr className="no-print border-t-2 border-border/80 shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] bg-blue-50/40 dark:bg-blue-950/20">
                 <td className="px-5 py-5 border-r border-border/30">
                   <input 
                     type="date" 
                     value={newDate}
                     onChange={(e) => setNewDate(e.target.value)}
-                    className="w-full bg-white dark:bg-zinc-800 border border-border rounded-lg px-2.5 py-2 text-xs font-mono"
+                    className="w-full bg-white dark:bg-zinc-900 border border-border rounded-xl px-4 py-3 text-sm font-mono font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                   />
                 </td>
                 <td className="px-5 py-5 border-r border-border/30">
@@ -484,41 +484,38 @@ export default function BankTransactionTable({
                     placeholder="Entry details..."
                     value={newDesc}
                     onChange={(e) => setNewDesc(e.target.value)}
-                    className="w-full bg-white dark:bg-zinc-800 border border-border rounded-lg px-3.5 py-2 text-sm font-semibold"
+                    className="w-full bg-white dark:bg-zinc-900 border border-border rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50"
                   />
                 </td>
                 <td className="px-5 py-5 border-r border-border/30">
                   <select 
                     value={newType} 
                     onChange={(e) => setNewType(e.target.value as 'income' | 'costing')}
-                    className="w-full bg-white dark:bg-zinc-800 border border-border rounded-lg px-2 py-2 text-xs font-bold"
+                    className="w-full bg-white dark:bg-zinc-900 border border-border rounded-xl px-2 py-3 text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all"
                   >
                       <option value="income">Credit (জমা)</option>
                       <option value="costing">Debit (উত্তোলন)</option>
                   </select>
                 </td>
                 <td colSpan={2} className="px-5 py-5 border-r border-border/30">
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">৳</span>
+                  <div className="relative group">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-black text-muted-foreground group-focus-within:text-foreground transition-colors">৳</span>
                     <input 
                       type="number" 
                       placeholder="Amount..."
                       value={newAmount}
                       onChange={(e) => setNewAmount(e.target.value)}
-                      className="w-full bg-white dark:bg-zinc-800 border border-border rounded-lg pl-7 pr-3.5 py-2 text-sm font-bold"
+                      className="w-full bg-white dark:bg-zinc-900 border border-border rounded-xl pl-8 pr-4 py-3 text-sm font-black outline-none focus:ring-2 focus:ring-primary/20 transition-all text-right placeholder:text-muted-foreground/50"
                     />
                   </div>
                 </td>
-                <td className="px-5 py-5 text-right no-print">
+                <td className="px-5 py-5 text-center no-print">
                   <button 
                     onClick={handleAdd}
                     disabled={!newAmount}
-                    className={cn(
-                      "flex items-center justify-center w-full py-2 rounded-lg font-bold text-xs uppercase tracking-widest transition-all",
-                      newType === 'income' ? "bg-emerald-600 text-white" : "bg-rose-600 text-white"
-                    )}
+                    className="flex items-center justify-center w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 shadow-blue-600/20 text-white font-black text-[11px] uppercase tracking-[0.2em] disabled:opacity-30 transition-all shadow-md active:scale-95"
                   >
-                    <Plus className="w-3.5 h-3.5 mr-1" strokeWidth={3} />
+                    <Plus className="w-4 h-4 mr-1" strokeWidth={3} />
                     Add
                   </button>
                 </td>
@@ -526,25 +523,29 @@ export default function BankTransactionTable({
             </tbody>
             <tfoot>
               {/* Row 1: Totals */}
-              <tr className="bg-slate-100 dark:bg-zinc-800 border-t-2 border-slate-900 dark:border-white h-20">
-                <td colSpan={3} className="px-5 py-0 border-r border-border/20 text-right">
-                    <span className="text-[10px] font-black uppercase text-slate-500 block">সারসংক্ষেপ</span>
-                    <span className="text-sm font-black uppercase text-slate-900 dark:text-white">মোট হিসাব (Totals)</span>
+              <tr className="border-t-2 border-border h-24 bg-blue-50/50 dark:bg-blue-950/40 transition-colors">
+                <td colSpan={3} className="px-5 lg:px-8 py-0 border-r border-border/20 text-right">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mb-1 italic opacity-50">Aggregate Total</span>
+                    <span className="text-sm lg:text-lg font-black uppercase tracking-tighter text-blue-700 dark:text-blue-400">
+                      মোট হিসাব (Totals)
+                    </span>
+                  </div>
                 </td>
-                <td className="px-5 py-0 text-xl lg:text-3xl font-black text-rose-600 border-r border-border/20">
+                <td className="px-5 lg:px-8 py-0 text-2xl lg:text-4xl font-black text-rose-600 border-r border-border/20 text-right tracking-tighter">
                   ৳ {formatBanglaAmount(totalDebit)}
                 </td>
-                <td className="px-5 py-0 text-xl lg:text-3xl font-black text-emerald-600 border-r border-border/20">
+                <td className="px-5 lg:px-8 py-0 text-2xl lg:text-4xl font-black text-emerald-600 border-r border-border/20 text-right tracking-tighter">
                   ৳ {formatBanglaAmount(totalCredit)}
                 </td>
                 <td className="no-print"></td>
               </tr>
               {/* Row 2: Balance */}
-              <tr className="bg-slate-50 dark:bg-zinc-900 h-16 border-t border-border/30">
-                <td colSpan={4} className="px-5 py-0 border-r border-border/20 text-right">
-                    <span className="text-sm font-black uppercase tracking-tighter text-muted-foreground italic">Net Balance (Credit - Debit)</span>
+              <tr className="h-16 bg-blue-100/50 dark:bg-blue-900/30 border-t border-border/30">
+                <td colSpan={4} className="px-5 lg:px-8 py-0 border-r border-border/20 text-right">
+                    <span className="text-xs lg:text-sm font-black uppercase tracking-[0.2em] text-blue-600/70 dark:text-blue-400/70">Net Balance</span>
                 </td>
-                <td className="px-5 py-0 text-2xl lg:text-6xl font-black text-blue-600 tracking-tighter">
+                <td className="px-5 lg:px-8 py-0 text-3xl lg:text-5xl font-black text-blue-600 tracking-tighter text-right">
                    ৳ {formatBanglaAmount(totalCredit - totalDebit)}
                 </td>
                 <td className="no-print"></td>
