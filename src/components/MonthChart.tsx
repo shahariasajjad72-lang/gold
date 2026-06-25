@@ -50,7 +50,7 @@ export default function MonthChart({ income, costing }: MonthChartProps) {
               ))}
             </Pie>
             <Tooltip
-              formatter={(value: number) => [`৳ ${formatBanglaAmount(value)}`, ""]}
+              formatter={(value: any) => [`৳ ${formatBanglaAmount(value || 0)}`, ""]}
               contentStyle={{ borderRadius: '16px', border: 'none', backgroundColor: '#fff', color: '#000', fontWeight: 'bold', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)' }}
               itemStyle={{ color: '#000' }}
             />

@@ -78,7 +78,7 @@ export default function DashboardChart({ months }: { months: MonthData[] }) {
               contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)', fontWeight: 'bold' }}
               itemStyle={{ fontWeight: 900 }}
               labelStyle={{ color: '#71717a', marginBottom: '8px' }}
-              formatter={(value: number, name: string) => [`৳ ${formatBanglaAmount(value)}`, name]}
+              formatter={(value: any, name: any) => [`৳ ${formatBanglaAmount(value || 0)}`, name]}
             />
             <Area
               type="monotone"
