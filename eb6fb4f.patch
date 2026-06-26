@@ -1,0 +1,2762 @@
+commit eb6fb4fed87b86642639625906cfeff393752dcb
+Author: shaharia <shahariahossain72@gmail.com>
+Date:   Thu Jun 25 22:50:01 2026 +0600
+
+    feat: overhaul GlobalBankAccountManager UI with modern gradients, refined layouts, and new visual components
+
+diff --git a/.gitignore b/.gitignore
+index 5ef6a52..83028b1 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -39,3 +39,10 @@ yarn-error.log*
+ # typescript
+ *.tsbuildinfo
+ next-env.d.ts
++
++# Database backups and dumps
++*.sql
++*.db
++*.sqlite
++*.sqlite3
++database_backup_*.sql
+diff --git a/package-lock.json b/package-lock.json
+index 278c44b..64bd48e 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -20,6 +20,8 @@
+         "postgres": "^3.4.8",
+         "react": "19.2.4",
+         "react-dom": "19.2.4",
++        "recharts": "^3.9.0",
++        "sonner": "^2.0.7",
+         "tailwind-merge": "^3.5.0"
+       },
+       "devDependencies": {
+@@ -2147,6 +2149,42 @@
+         "node": ">=12.4.0"
+       }
+     },
++    "node_modules/@reduxjs/toolkit": {
++      "version": "2.12.0",
++      "resolved": "https://registry.npmjs.org/@reduxjs/toolkit/-/toolkit-2.12.0.tgz",
++      "integrity": "sha512-KiT+RzZbp6mQET+Mg+h2c97+9j1sNflUxQkIHI7Yuzf6Peu+OYpmkn6nbHWmLLWj+1ZODUJFwGZ7gx3L9R9EOw==",
++      "license": "MIT",
++      "dependencies": {
++        "@standard-schema/spec": "^1.0.0",
++        "@standard-schema/utils": "^0.3.0",
++        "immer": "^11.0.0",
++        "redux": "^5.0.1",
++        "redux-thunk": "^3.1.0",
++        "reselect": "^5.1.0"
++      },
++      "peerDependencies": {
++        "react": "^16.9.0 || ^17.0.0 || ^18 || ^19",
++        "react-redux": "^7.2.1 || ^8.1.3 || ^9.0.0"
++      },
++      "peerDependenciesMeta": {
++        "react": {
++          "optional": true
++        },
++        "react-redux": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/@reduxjs/toolkit/node_modules/immer": {
++      "version": "11.1.8",
++      "resolved": "https://registry.npmjs.org/immer/-/immer-11.1.8.tgz",
++      "integrity": "sha512-/tbkHMW7y10Lx6i1crLjD4/OhNkRG+Fo7byZHtah0547nIeXYcpIXaUh0IAQY6gO5459qpGGYapcEOHtFXkIuA==",
++      "license": "MIT",
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/immer"
++      }
++    },
+     "node_modules/@rtsao/scc": {
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/@rtsao/scc/-/scc-1.1.0.tgz",
+@@ -2154,6 +2192,18 @@
+       "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/@standard-schema/spec": {
++      "version": "1.1.0",
++      "resolved": "https://registry.npmjs.org/@standard-schema/spec/-/spec-1.1.0.tgz",
++      "integrity": "sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==",
++      "license": "MIT"
++    },
++    "node_modules/@standard-schema/utils": {
++      "version": "0.3.0",
++      "resolved": "https://registry.npmjs.org/@standard-schema/utils/-/utils-0.3.0.tgz",
++      "integrity": "sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==",
++      "license": "MIT"
++    },
+     "node_modules/@supabase/auth-js": {
+       "version": "2.101.0",
+       "resolved": "https://registry.npmjs.org/@supabase/auth-js/-/auth-js-2.101.0.tgz",
+@@ -2595,6 +2645,69 @@
+         "tslib": "^2.4.0"
+       }
+     },
++    "node_modules/@types/d3-array": {
++      "version": "3.2.2",
++      "resolved": "https://registry.npmjs.org/@types/d3-array/-/d3-array-3.2.2.tgz",
++      "integrity": "sha512-hOLWVbm7uRza0BYXpIIW5pxfrKe0W+D5lrFiAEYR+pb6w3N2SwSMaJbXdUfSEv+dT4MfHBLtn5js0LAWaO6otw==",
++      "license": "MIT"
++    },
++    "node_modules/@types/d3-color": {
++      "version": "3.1.3",
++      "resolved": "https://registry.npmjs.org/@types/d3-color/-/d3-color-3.1.3.tgz",
++      "integrity": "sha512-iO90scth9WAbmgv7ogoq57O9YpKmFBbmoEoCHDB2xMBY0+/KVrqAaCDyCE16dUspeOvIxFFRI+0sEtqDqy2b4A==",
++      "license": "MIT"
++    },
++    "node_modules/@types/d3-ease": {
++      "version": "3.0.2",
++      "resolved": "https://registry.npmjs.org/@types/d3-ease/-/d3-ease-3.0.2.tgz",
++      "integrity": "sha512-NcV1JjO5oDzoK26oMzbILE6HW7uVXOHLQvHshBUW4UMdZGfiY6v5BeQwh9a9tCzv+CeefZQHJt5SRgK154RtiA==",
++      "license": "MIT"
++    },
++    "node_modules/@types/d3-interpolate": {
++      "version": "3.0.4",
++      "resolved": "https://registry.npmjs.org/@types/d3-interpolate/-/d3-interpolate-3.0.4.tgz",
++      "integrity": "sha512-mgLPETlrpVV1YRJIglr4Ez47g7Yxjl1lj7YKsiMCb27VJH9W8NVM6Bb9d8kkpG/uAQS5AmbA48q2IAolKKo1MA==",
++      "license": "MIT",
++      "dependencies": {
++        "@types/d3-color": "*"
++      }
++    },
++    "node_modules/@types/d3-path": {
++      "version": "3.1.1",
++      "resolved": "https://registry.npmjs.org/@types/d3-path/-/d3-path-3.1.1.tgz",
++      "integrity": "sha512-VMZBYyQvbGmWyWVea0EHs/BwLgxc+MKi1zLDCONksozI4YJMcTt8ZEuIR4Sb1MMTE8MMW49v0IwI5+b7RmfWlg==",
++      "license": "MIT"
++    },
++    "node_modules/@types/d3-scale": {
++      "version": "4.0.9",
++      "resolved": "https://registry.npmjs.org/@types/d3-scale/-/d3-scale-4.0.9.tgz",
++      "integrity": "sha512-dLmtwB8zkAeO/juAMfnV+sItKjlsw2lKdZVVy6LRr0cBmegxSABiLEpGVmSJJ8O08i4+sGR6qQtb6WtuwJdvVw==",
++      "license": "MIT",
++      "dependencies": {
++        "@types/d3-time": "*"
++      }
++    },
++    "node_modules/@types/d3-shape": {
++      "version": "3.1.8",
++      "resolved": "https://registry.npmjs.org/@types/d3-shape/-/d3-shape-3.1.8.tgz",
++      "integrity": "sha512-lae0iWfcDeR7qt7rA88BNiqdvPS5pFVPpo5OfjElwNaT2yyekbM0C9vK+yqBqEmHr6lDkRnYNoTBYlAgJa7a4w==",
++      "license": "MIT",
++      "dependencies": {
++        "@types/d3-path": "*"
++      }
++    },
++    "node_modules/@types/d3-time": {
++      "version": "3.0.4",
++      "resolved": "https://registry.npmjs.org/@types/d3-time/-/d3-time-3.0.4.tgz",
++      "integrity": "sha512-yuzZug1nkAAaBlBBikKZTgzCeA+k1uy4ZFwWANOfKw5z5LRhV0gNA7gNkKm7HoK+HRN0wX3EkxGk0fpbWhmB7g==",
++      "license": "MIT"
++    },
++    "node_modules/@types/d3-timer": {
++      "version": "3.0.2",
++      "resolved": "https://registry.npmjs.org/@types/d3-timer/-/d3-timer-3.0.2.tgz",
++      "integrity": "sha512-Ps3T8E8dZDam6fUyNiMkekK3XUsaUEik+idO9/YjPtfj2qruF8tFBXS7XhtE4iIXBLxhmLjP3SXpLhVf21I9Lw==",
++      "license": "MIT"
++    },
+     "node_modules/@types/estree": {
+       "version": "1.0.8",
+       "resolved": "https://registry.npmjs.org/@types/estree/-/estree-1.0.8.tgz",
+@@ -2647,7 +2760,7 @@
+       "version": "19.2.14",
+       "resolved": "https://registry.npmjs.org/@types/react/-/react-19.2.14.tgz",
+       "integrity": "sha512-ilcTH/UniCkMdtexkoCN0bI7pMcJDvmQFPvuPvmEaYA/NSfFTAgdUSLAoVjaRJm7+6PvcM+q1zYOwS4wTYMF9w==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "MIT",
+       "dependencies": {
+         "csstype": "^3.2.2"
+@@ -2663,6 +2776,12 @@
+         "@types/react": "^19.2.0"
+       }
+     },
++    "node_modules/@types/use-sync-external-store": {
++      "version": "0.0.6",
++      "resolved": "https://registry.npmjs.org/@types/use-sync-external-store/-/use-sync-external-store-0.0.6.tgz",
++      "integrity": "sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==",
++      "license": "MIT"
++    },
+     "node_modules/@types/ws": {
+       "version": "8.18.1",
+       "resolved": "https://registry.npmjs.org/@types/ws/-/ws-8.18.1.tgz",
+@@ -3771,9 +3890,130 @@
+       "version": "3.2.3",
+       "resolved": "https://registry.npmjs.org/csstype/-/csstype-3.2.3.tgz",
+       "integrity": "sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "MIT"
+     },
++    "node_modules/d3-array": {
++      "version": "3.2.4",
++      "resolved": "https://registry.npmjs.org/d3-array/-/d3-array-3.2.4.tgz",
++      "integrity": "sha512-tdQAmyA18i4J7wprpYq8ClcxZy3SC31QMeByyCFyRt7BVHdREQZ5lpzoe5mFEYZUWe+oq8HBvk9JjpibyEV4Jg==",
++      "license": "ISC",
++      "dependencies": {
++        "internmap": "1 - 2"
++      },
++      "engines": {
++        "node": ">=12"
++      }
++    },
++    "node_modules/d3-color": {
++      "version": "3.1.0",
++      "resolved": "https://registry.npmjs.org/d3-color/-/d3-color-3.1.0.tgz",
++      "integrity": "sha512-zg/chbXyeBtMQ1LbD/WSoW2DpC3I0mpmPdW+ynRTj/x2DAWYrIY7qeZIHidozwV24m4iavr15lNwIwLxRmOxhA==",
++      "license": "ISC",
++      "engines": {
++        "node": ">=12"
++      }
++    },
++    "node_modules/d3-ease": {
++      "version": "3.0.1",
++      "resolved": "https://registry.npmjs.org/d3-ease/-/d3-ease-3.0.1.tgz",
++      "integrity": "sha512-wR/XK3D3XcLIZwpbvQwQ5fK+8Ykds1ip7A2Txe0yxncXSdq1L9skcG7blcedkOX+ZcgxGAmLX1FrRGbADwzi0w==",
++      "license": "BSD-3-Clause",
++      "engines": {
++        "node": ">=12"
++      }
++    },
++    "node_modules/d3-format": {
++      "version": "3.1.2",
++      "resolved": "https://registry.npmjs.org/d3-format/-/d3-format-3.1.2.tgz",
++      "integrity": "sha512-AJDdYOdnyRDV5b6ArilzCPPwc1ejkHcoyFarqlPqT7zRYjhavcT3uSrqcMvsgh2CgoPbK3RCwyHaVyxYcP2Arg==",
++      "license": "ISC",
++      "engines": {
++        "node": ">=12"
++      }
++    },
++    "node_modules/d3-interpolate": {
++      "version": "3.0.1",
++      "resolved": "https://registry.npmjs.org/d3-interpolate/-/d3-interpolate-3.0.1.tgz",
++      "integrity": "sha512-3bYs1rOD33uo8aqJfKP3JWPAibgw8Zm2+L9vBKEHJ2Rg+viTR7o5Mmv5mZcieN+FRYaAOWX5SJATX6k1PWz72g==",
++      "license": "ISC",
++      "dependencies": {
++        "d3-color": "1 - 3"
++      },
++      "engines": {
++        "node": ">=12"
++      }
++    },
++    "node_modules/d3-path": {
++      "version": "3.1.0",
++      "resolved": "https://registry.npmjs.org/d3-path/-/d3-path-3.1.0.tgz",
++      "integrity": "sha512-p3KP5HCf/bvjBSSKuXid6Zqijx7wIfNW+J/maPs+iwR35at5JCbLUT0LzF1cnjbCHWhqzQTIN2Jpe8pRebIEFQ==",
++      "license": "ISC",
++      "engines": {
++        "node": ">=12"
++      }
++    },
++    "node_modules/d3-scale": {
++      "version": "4.0.2",
++      "resolved": "https://registry.npmjs.org/d3-scale/-/d3-scale-4.0.2.tgz",
++      "integrity": "sha512-GZW464g1SH7ag3Y7hXjf8RoUuAFIqklOAq3MRl4OaWabTFJY9PN/E1YklhXLh+OQ3fM9yS2nOkCoS+WLZ6kvxQ==",
++      "license": "ISC",
++      "dependencies": {
++        "d3-array": "2.10.0 - 3",
++        "d3-format": "1 - 3",
++        "d3-interpolate": "1.2.0 - 3",
++        "d3-time": "2.1.1 - 3",
++        "d3-time-format": "2 - 4"
++      },
++      "engines": {
++        "node": ">=12"
++      }
++    },
++    "node_modules/d3-shape": {
++      "version": "3.2.0",
++      "resolved": "https://registry.npmjs.org/d3-shape/-/d3-shape-3.2.0.tgz",
++      "integrity": "sha512-SaLBuwGm3MOViRq2ABk3eLoxwZELpH6zhl3FbAoJ7Vm1gofKx6El1Ib5z23NUEhF9AsGl7y+dzLe5Cw2AArGTA==",
++      "license": "ISC",
++      "dependencies": {
++        "d3-path": "^3.1.0"
++      },
++      "engines": {
++        "node": ">=12"
++      }
++    },
++    "node_modules/d3-time": {
++      "version": "3.1.0",
++      "resolved": "https://registry.npmjs.org/d3-time/-/d3-time-3.1.0.tgz",
++      "integrity": "sha512-VqKjzBLejbSMT4IgbmVgDjpkYrNWUYJnbCGo874u7MMKIWsILRX+OpX/gTk8MqjpT1A/c6HY2dCA77ZN0lkQ2Q==",
++      "license": "ISC",
++      "dependencies": {
++        "d3-array": "2 - 3"
++      },
++      "engines": {
++        "node": ">=12"
++      }
++    },
++    "node_modules/d3-time-format": {
++      "version": "4.1.0",
++      "resolved": "https://registry.npmjs.org/d3-time-format/-/d3-time-format-4.1.0.tgz",
++      "integrity": "sha512-dJxPBlzC7NugB2PDLwo9Q8JiTR3M3e4/XANkreKSUxF8vvXKqm1Yfq4Q5dl8budlunRVlUUaDUgFt7eA8D6NLg==",
++      "license": "ISC",
++      "dependencies": {
++        "d3-time": "1 - 3"
++      },
++      "engines": {
++        "node": ">=12"
++      }
++    },
++    "node_modules/d3-timer": {
++      "version": "3.0.1",
++      "resolved": "https://registry.npmjs.org/d3-timer/-/d3-timer-3.0.1.tgz",
++      "integrity": "sha512-ndfJ/JxxMd3nw31uyKoY2naivF+r29V+Lc0svZxe1JvvIRmi8hUsrMvdOwgS1o6uBHmiz91geQ0ylPP0aj1VUA==",
++      "license": "ISC",
++      "engines": {
++        "node": ">=12"
++      }
++    },
+     "node_modules/damerau-levenshtein": {
+       "version": "1.0.8",
+       "resolved": "https://registry.npmjs.org/damerau-levenshtein/-/damerau-levenshtein-1.0.8.tgz",
+@@ -3863,6 +4103,12 @@
+         }
+       }
+     },
++    "node_modules/decimal.js-light": {
++      "version": "2.5.1",
++      "resolved": "https://registry.npmjs.org/decimal.js-light/-/decimal.js-light-2.5.1.tgz",
++      "integrity": "sha512-qIMFpTMZmny+MMIitAB6D7iVPEorVw6YQRWkvarTkT4tBeSLLiHzcwj6q0MmYSFCiVpiqPJTJEYIrpcPzVEIvg==",
++      "license": "MIT"
++    },
+     "node_modules/deep-is": {
+       "version": "0.1.4",
+       "resolved": "https://registry.npmjs.org/deep-is/-/deep-is-0.1.4.tgz",
+@@ -4303,6 +4549,16 @@
+         "url": "https://github.com/sponsors/ljharb"
+       }
+     },
++    "node_modules/es-toolkit": {
++      "version": "1.48.1",
++      "resolved": "https://registry.npmjs.org/es-toolkit/-/es-toolkit-1.48.1.tgz",
++      "integrity": "sha512-wfnXlwd5I75eXRtdD2vuEs50xHHESECDsGD7yiQnfFVNoa5522NwXEbmgo98LfiukSQHs+mBM7/YG3qKJB9/mQ==",
++      "license": "MIT",
++      "workspaces": [
++        "docs",
++        "benchmarks"
++      ]
++    },
+     "node_modules/esbuild": {
+       "version": "0.25.12",
+       "resolved": "https://registry.npmjs.org/esbuild/-/esbuild-0.25.12.tgz",
+@@ -4798,6 +5054,12 @@
+         "node": ">=0.10.0"
+       }
+     },
++    "node_modules/eventemitter3": {
++      "version": "5.0.4",
++      "resolved": "https://registry.npmjs.org/eventemitter3/-/eventemitter3-5.0.4.tgz",
++      "integrity": "sha512-mlsTRyGaPBjPedk6Bvw+aqbsXDtoAyAzm5MO7JgU+yVRyMQ5O8bD4Kcci7BS85f93veegeCPkL8R4GLClnjLFw==",
++      "license": "MIT"
++    },
+     "node_modules/fast-deep-equal": {
+       "version": "3.1.3",
+       "resolved": "https://registry.npmjs.org/fast-deep-equal/-/fast-deep-equal-3.1.3.tgz",
+@@ -5319,6 +5581,16 @@
+         "node": ">= 4"
+       }
+     },
++    "node_modules/immer": {
++      "version": "10.2.0",
++      "resolved": "https://registry.npmjs.org/immer/-/immer-10.2.0.tgz",
++      "integrity": "sha512-d/+XTN3zfODyjr89gM3mPq1WNX2B8pYsu7eORitdwyA2sBubnTl3laYlBk4sXY5FUa5qTZGBDPJICVbvqzjlbw==",
++      "license": "MIT",
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/immer"
++      }
++    },
+     "node_modules/import-fresh": {
+       "version": "3.3.1",
+       "resolved": "https://registry.npmjs.org/import-fresh/-/import-fresh-3.3.1.tgz",
+@@ -5361,6 +5633,15 @@
+         "node": ">= 0.4"
+       }
+     },
++    "node_modules/internmap": {
++      "version": "2.0.3",
++      "resolved": "https://registry.npmjs.org/internmap/-/internmap-2.0.3.tgz",
++      "integrity": "sha512-5Hh7Y1wQbvY5ooGgPbDaL5iYLAPzMTUrjMulskHLH6wnv/A+1q5rgEaiuqEjB+oxGXIVZs1FF+R/KPN3ZSQYYg==",
++      "license": "ISC",
++      "engines": {
++        "node": ">=12"
++      }
++    },
+     "node_modules/is-array-buffer": {
+       "version": "3.0.5",
+       "resolved": "https://registry.npmjs.org/is-array-buffer/-/is-array-buffer-3.0.5.tgz",
+@@ -6948,9 +7229,76 @@
+       "version": "16.13.1",
+       "resolved": "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz",
+       "integrity": "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==",
+-      "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/react-redux": {
++      "version": "9.3.0",
++      "resolved": "https://registry.npmjs.org/react-redux/-/react-redux-9.3.0.tgz",
++      "integrity": "sha512-KQopgqFo/p/fgmAs5qz6p5RWaNAzq40WAu7fJIXnQpYxFPbJYtsJPWvGeF2rOBaY/kEuV77AVsX8TsQzKm+A/g==",
++      "license": "MIT",
++      "dependencies": {
++        "@types/use-sync-external-store": "^0.0.6",
++        "use-sync-external-store": "^1.4.0"
++      },
++      "peerDependencies": {
++        "@types/react": "^18.2.25 || ^19",
++        "react": "^18.0 || ^19",
++        "redux": "^5.0.0"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "redux": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/recharts": {
++      "version": "3.9.0",
++      "resolved": "https://registry.npmjs.org/recharts/-/recharts-3.9.0.tgz",
++      "integrity": "sha512-dCEcE9y20c8H2tkVeByrAXhhnBJk6/QLbxKmn+dJUptOfc5NMjwRh1jo0vZPRLD+5dMrHrP+hPEsfbGBMfnf5Q==",
++      "license": "MIT",
++      "workspaces": [
++        "www"
++      ],
++      "dependencies": {
++        "@reduxjs/toolkit": "^1.9.0 || 2.x.x",
++        "clsx": "^2.1.1",
++        "decimal.js-light": "^2.5.1",
++        "es-toolkit": "^1.39.3",
++        "eventemitter3": "^5.0.1",
++        "immer": "^10.1.1",
++        "react-redux": "8.x.x || 9.x.x",
++        "reselect": "5.2.0",
++        "tiny-invariant": "^1.3.3",
++        "use-sync-external-store": "^1.2.2",
++        "victory-vendor": "^37.0.2"
++      },
++      "engines": {
++        "node": ">=18"
++      },
++      "peerDependencies": {
++        "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
++        "react-dom": "^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
++        "react-is": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
++      }
++    },
++    "node_modules/redux": {
++      "version": "5.0.1",
++      "resolved": "https://registry.npmjs.org/redux/-/redux-5.0.1.tgz",
++      "integrity": "sha512-M9/ELqF6fy8FwmkpnF0S3YKOqMyoWJ4+CS5Efg2ct3oY9daQvd/Pc71FpGZsVsbl3Cpb+IIcjBDUnnyBdQbq4w==",
++      "license": "MIT"
++    },
++    "node_modules/redux-thunk": {
++      "version": "3.1.0",
++      "resolved": "https://registry.npmjs.org/redux-thunk/-/redux-thunk-3.1.0.tgz",
++      "integrity": "sha512-NW2r5T6ksUKXCabzhL9z+h206HQw/NJkcLm1GPImRQ8IzfXwRGqjVhKJGauHirT0DAuyy6hjdnMZaRoAcy0Klw==",
++      "license": "MIT",
++      "peerDependencies": {
++        "redux": "^5.0.0"
++      }
++    },
+     "node_modules/reflect.getprototypeof": {
+       "version": "1.0.10",
+       "resolved": "https://registry.npmjs.org/reflect.getprototypeof/-/reflect.getprototypeof-1.0.10.tgz",
+@@ -6995,6 +7343,12 @@
+         "url": "https://github.com/sponsors/ljharb"
+       }
+     },
++    "node_modules/reselect": {
++      "version": "5.2.0",
++      "resolved": "https://registry.npmjs.org/reselect/-/reselect-5.2.0.tgz",
++      "integrity": "sha512-AgZ3UOZm3YndfrJ4OYjgrT7bmCm/1iqkjvEfH/oYjzh6PD2qw4QuT3jjnXIrpdt4MTpMXclMT3lXbmRY+XRakw==",
++      "license": "MIT"
++    },
+     "node_modules/resolve": {
+       "version": "1.22.11",
+       "resolved": "https://registry.npmjs.org/resolve/-/resolve-1.22.11.tgz",
+@@ -7348,6 +7702,16 @@
+         "url": "https://github.com/sponsors/ljharb"
+       }
+     },
++    "node_modules/sonner": {
++      "version": "2.0.7",
++      "resolved": "https://registry.npmjs.org/sonner/-/sonner-2.0.7.tgz",
++      "integrity": "sha512-W6ZN4p58k8aDKA4XPcx2hpIQXBRAgyiWVkYhT7CvK6D3iAu7xjvVyhQHg2/iaKJZ1XVJ4r7XuwGL+WGEK37i9w==",
++      "license": "MIT",
++      "peerDependencies": {
++        "react": "^18.0.0 || ^19.0.0 || ^19.0.0-rc",
++        "react-dom": "^18.0.0 || ^19.0.0 || ^19.0.0-rc"
++      }
++    },
+     "node_modules/source-map": {
+       "version": "0.6.1",
+       "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.6.1.tgz",
+@@ -7615,6 +7979,12 @@
+         "url": "https://opencollective.com/webpack"
+       }
+     },
++    "node_modules/tiny-invariant": {
++      "version": "1.3.3",
++      "resolved": "https://registry.npmjs.org/tiny-invariant/-/tiny-invariant-1.3.3.tgz",
++      "integrity": "sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==",
++      "license": "MIT"
++    },
+     "node_modules/tinyglobby": {
+       "version": "0.2.15",
+       "resolved": "https://registry.npmjs.org/tinyglobby/-/tinyglobby-0.2.15.tgz",
+@@ -8455,6 +8825,37 @@
+         "punycode": "^2.1.0"
+       }
+     },
++    "node_modules/use-sync-external-store": {
++      "version": "1.6.0",
++      "resolved": "https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.6.0.tgz",
++      "integrity": "sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==",
++      "license": "MIT",
++      "peerDependencies": {
++        "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
++      }
++    },
++    "node_modules/victory-vendor": {
++      "version": "37.3.6",
++      "resolved": "https://registry.npmjs.org/victory-vendor/-/victory-vendor-37.3.6.tgz",
++      "integrity": "sha512-SbPDPdDBYp+5MJHhBCAyI7wKM3d5ivekigc2Dk2s7pgbZ9wIgIBYGVw4zGHBml/qTFbexrofXW6Gu4noGxrOwQ==",
++      "license": "MIT AND ISC",
++      "dependencies": {
++        "@types/d3-array": "^3.0.3",
++        "@types/d3-ease": "^3.0.0",
++        "@types/d3-interpolate": "^3.0.1",
++        "@types/d3-scale": "^4.0.2",
++        "@types/d3-shape": "^3.1.0",
++        "@types/d3-time": "^3.0.0",
++        "@types/d3-timer": "^3.0.0",
++        "d3-array": "^3.1.6",
++        "d3-ease": "^3.0.1",
++        "d3-interpolate": "^3.0.1",
++        "d3-scale": "^4.0.2",
++        "d3-shape": "^3.1.0",
++        "d3-time": "^3.0.0",
++        "d3-timer": "^3.0.1"
++      }
++    },
+     "node_modules/which": {
+       "version": "2.0.2",
+       "resolved": "https://registry.npmjs.org/which/-/which-2.0.2.tgz",
+diff --git a/package.json b/package.json
+index c7af3ed..c1be74e 100644
+--- a/package.json
++++ b/package.json
+@@ -21,6 +21,8 @@
+     "postgres": "^3.4.8",
+     "react": "19.2.4",
+     "react-dom": "19.2.4",
++    "recharts": "^3.9.0",
++    "sonner": "^2.0.7",
+     "tailwind-merge": "^3.5.0"
+   },
+   "devDependencies": {
+diff --git a/public/logo.png b/public/logo.png
+new file mode 100644
+index 0000000..f23d392
+Binary files /dev/null and b/public/logo.png differ
+diff --git a/src/analyze_all.mjs b/src/analyze_all.mjs
+new file mode 100644
+index 0000000..9a6c6e1
+--- /dev/null
++++ b/src/analyze_all.mjs
+@@ -0,0 +1,45 @@
++import postgres from 'postgres';
++
++const sql = postgres("postgresql://postgres.obighzeelrsrxkhrvprf:e8UAuGU9jQtkNwNs@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres");
++
++async function analyzeAll() {
++  const months = await sql`SELECT * FROM months ORDER BY year ASC, id ASC`;
++  console.log(`Total Months found: ${months.length}`);
++  
++  for (const month of months) {
++    console.log(`\n=================================================`);
++    console.log(`Month: ${month.name} ${month.year} (ID: ${month.id})`);
++    console.log(`Opening Balance: ${month.opening_balance}`);
++    console.log(`Total Income (from month table): ${month.income}`);
++    console.log(`Total Costing (from month table): ${month.costing}`);
++    console.log(`Net Balance (Cash Closing): ${month.net_balance}`);
++
++    const trans = await sql`SELECT type, count(*) as count, sum(amount) as total FROM transactions WHERE month_id = ${month.id} GROUP BY type`;
++    console.log(`Transactions:`);
++    let totalTrans = 0;
++    trans.forEach(t => {
++      console.log(`  - ${t.type.toUpperCase()}: ${t.count} entries, Total Amount: ${t.total}`);
++      totalTrans += parseInt(t.count);
++    });
++    console.log(`  - Total Entries: ${totalTrans}`);
++
++    // Let's find top categories
++    const categories = await sql`SELECT category, count(*) as count, sum(amount) as total FROM transactions WHERE month_id = ${month.id} GROUP BY category ORDER BY count DESC LIMIT 3`;
++    console.log(`  - Top Categories by frequency:`);
++    categories.forEach(c => {
++      console.log(`      * ${c.category}: ${c.count} times (Total: ${c.total})`);
++    });
++  }
++
++  const globalBanks = await sql`SELECT * FROM global_banks`;
++  console.log(`\n=================================================`);
++  console.log(`Global Banks tracked: ${globalBanks.length}`);
++  globalBanks.forEach(b => {
++    console.log(`  - ${b.category} (Initial Balance: ${b.initial_balance})`);
++  });
++
++  const totalTransactionsCount = await sql`SELECT count(*) FROM transactions`;
++  console.log(`\nTotal Transactions in Database: ${totalTransactionsCount[0].count}`);
++}
++
++analyzeAll().then(() => sql.end()).catch(console.error);
+diff --git a/src/analyze_suggestions.mjs b/src/analyze_suggestions.mjs
+new file mode 100644
+index 0000000..c3c5b8a
+--- /dev/null
++++ b/src/analyze_suggestions.mjs
+@@ -0,0 +1,34 @@
++import postgres from 'postgres';
++
++const sql = postgres("postgresql://postgres.obighzeelrsrxkhrvprf:e8UAuGU9jQtkNwNs@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres");
++
++async function analyzeDescriptions() {
++  const categories = await sql`SELECT DISTINCT category FROM transactions`;
++  
++  for (const c of categories) {
++    const category = c.category;
++    console.log(`\n--- ${category} ---`);
++    
++    const descriptions = await sql`
++      SELECT description, count(*) as count 
++      FROM transactions 
++      WHERE category = ${category} 
++        AND description IS NOT NULL 
++        AND description != '' 
++      GROUP BY description 
++      ORDER BY count DESC 
++      LIMIT 10
++    `;
++    
++    if (descriptions.length === 0) {
++      console.log('No frequent descriptions found.');
++      continue;
++    }
++    
++    descriptions.forEach(d => {
++      console.log(`  - "${d.description}" (${d.count} times)`);
++    });
++  }
++}
++
++analyzeDescriptions().then(() => sql.end()).catch(console.error);
+diff --git a/src/app/dashboard/page.tsx b/src/app/dashboard/page.tsx
+index aded489..9705f9d 100644
+--- a/src/app/dashboard/page.tsx
++++ b/src/app/dashboard/page.tsx
+@@ -11,6 +11,9 @@ import { Search, Filter, LayoutGrid } from 'lucide-react';
+ import { useRouter } from 'next/navigation';
+ import { getMonths } from '@/lib/actions';
+ import GlobalBankAccountManager from '@/components/GlobalBankAccountManager';
++import DashboardChart from '@/components/DashboardChart';
++import { formatBanglaAmount } from '@/lib/utils/bangla-date';
++import { TrendingUp, TrendingDown, Wallet } from 'lucide-react';
+ 
+ // Lazy-load heavy modal
+ const AddMonthModal = dynamic(() => import('@/components/AddMonthModal'), { ssr: false });
+@@ -52,6 +55,10 @@ export default function DashboardPage() {
+     );
+   }
+ 
++  const totalIncome = months.reduce((acc, m) => acc + (m.income || 0), 0);
++  const totalExpense = months.reduce((acc, m) => acc + (m.costing || 0), 0);
++  const netBalance = totalIncome - totalExpense;
++
+   return (
+     <div className="min-h-screen bg-background">
+       <DashboardHeader />
+@@ -59,8 +66,8 @@ export default function DashboardPage() {
+       <main className="container mx-auto px-4 py-12 max-w-[1700px]">
+         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+           <div>
+-            <h1 className="text-4xl lg:text-6xl font-black tracking-tighter text-foreground mb-2">My Tracker</h1>
+-            <p className="text-muted-foreground font-medium lg:text-lg">Manage your monthly financial records</p>
++            <h1 className="text-4xl lg:text-5xl font-black tracking-tighter text-foreground mb-2 uppercase">Dashboard</h1>
++            <p className="text-muted-foreground font-bold lg:text-sm tracking-widest uppercase">My Tracker Financial Analytics</p>
+           </div>
+           
+           <div className="flex items-center gap-3 w-full md:w-auto">
+@@ -69,15 +76,50 @@ export default function DashboardPage() {
+               <input 
+                 type="text" 
+                 placeholder="Search..." 
+-                className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-muted/50 border border-transparent focus:bg-background focus:border-border outline-none transition-all text-sm font-medium"
++                className="w-full pl-11 pr-4 py-3 rounded-2xl bg-muted/50 border border-transparent focus:bg-background focus:border-border outline-none transition-all text-sm font-bold"
+               />
+             </div>
+-            <button className="p-2.5 rounded-xl border border-border hover:bg-muted transition-all">
+-              <Filter className="w-5 h-5 text-muted-foreground" />
++            <button className="p-3 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-black hover:scale-105 transition-all shadow-xl shadow-slate-900/20 dark:shadow-white/20">
++              <Filter className="w-5 h-5" />
+             </button>
+           </div>
+         </div>
+ 
++        {/* --- V2 KPIs & Chart Section --- */}
++        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-10">
++          {/* Top KPIs */}
++          <div className="flex flex-col gap-6">
++            <div className="p-8 rounded-[32px] bg-emerald-50 dark:bg-emerald-950/20 border-2 border-emerald-100 dark:border-emerald-900/30 shadow-sm flex flex-col justify-center relative overflow-hidden h-full group">
++              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
++                <TrendingUp className="w-24 h-24 text-emerald-500" />
++              </div>
++              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-500 mb-2">All-Time Revenue</p>
++              <h2 className="text-4xl font-black text-emerald-900 dark:text-emerald-400">৳ {formatBanglaAmount(totalIncome)}</h2>
++            </div>
++
++            <div className="p-8 rounded-[32px] bg-rose-50 dark:bg-rose-950/20 border-2 border-rose-100 dark:border-rose-900/30 shadow-sm flex flex-col justify-center relative overflow-hidden h-full group">
++              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
++                <TrendingDown className="w-24 h-24 text-rose-500" />
++              </div>
++              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-rose-600 dark:text-rose-500 mb-2">All-Time Expense</p>
++              <h2 className="text-4xl font-black text-rose-900 dark:text-rose-400">৳ {formatBanglaAmount(totalExpense)}</h2>
++            </div>
++
++            <div className="p-8 rounded-[32px] bg-slate-900 dark:bg-white border-2 border-slate-900 dark:border-white shadow-2xl flex flex-col justify-center relative overflow-hidden h-full group">
++              <div className="absolute top-0 right-0 p-6 opacity-10 transition-opacity">
++                <Wallet className="w-24 h-24 text-white dark:text-black" />
++              </div>
++              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2">Net Cash Flow</p>
++              <h2 className="text-4xl font-black text-white dark:text-black">৳ {formatBanglaAmount(netBalance)}</h2>
++            </div>
++          </div>
++
++          {/* Interactive Chart */}
++          <div className="xl:col-span-2">
++            <DashboardChart months={months} />
++          </div>
++        </div>
++
+         <GlobalBankAccountManager />
+ 
+         {/* Grid of Months - Updated to Three in a Row + wider for 2xl */}
+diff --git a/src/app/layout.tsx b/src/app/layout.tsx
+index 7cc7e47..2802e33 100644
+--- a/src/app/layout.tsx
++++ b/src/app/layout.tsx
+@@ -1,5 +1,6 @@
+ import type { Metadata } from "next";
+ import { Geist } from "next/font/google";
++import { Toaster } from "sonner";
+ import "./globals.css";
+ 
+ const geistSans = Geist({
+@@ -26,6 +27,7 @@ export default function RootLayout({
+     >
+       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+         {children}
++        <Toaster position="top-right" richColors expand={true} />
+       </body>
+     </html>
+   );
+diff --git a/src/app/month/[id]/page.tsx b/src/app/month/[id]/page.tsx
+index d9b05db..4658f34 100644
+--- a/src/app/month/[id]/page.tsx
++++ b/src/app/month/[id]/page.tsx
+@@ -27,6 +27,7 @@ import dynamic from 'next/dynamic';
+ import { BarChart3, FileText } from 'lucide-react';
+ import { INCOME_CATEGORIES, COSTING_CATEGORIES, BANK_CATEGORIES } from '@/lib/constants';
+ import { updateOpeningBalance } from '@/lib/actions';
++import MonthChart from '@/components/MonthChart';
+ 
+ // Lazy-load heavy modal components — they are only fetched when the user opens them.
+ const AddTransactionModal = dynamic(() => import('@/components/AddTransactionModal'), { ssr: false });
+@@ -111,51 +112,13 @@ export default function MonthDetailPage() {
+           </button>
+ 
+           <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
+-            <motion.button
+-              whileHover={{ scale: 1.05 }}
+-              whileTap={{ scale: 0.95 }}
+-              onClick={() => setIsReportModalOpen(true)}
+-              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-muted border border-border text-foreground font-black uppercase tracking-widest text-[10px] shadow-sm hover:shadow-md transition-all no-print"
+-            >
+-              <Printer className="w-4 h-4" />
+-              Daily
+-            </motion.button>
+-
+-            <motion.button
+-              whileHover={{ scale: 1.05 }}
+-              whileTap={{ scale: 0.95 }}
+-              onClick={() => setIsSummaryModalOpen(true)}
+-              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-700 font-black uppercase tracking-widest text-[10px] shadow-sm hover:shadow-md transition-all no-print"
+-            >
+-              <BarChart3 className="w-4 h-4" />
+-              Summary
+-            </motion.button>
+-
+-            <motion.button
+-              whileHover={{ scale: 1.05 }}
+-              whileTap={{ scale: 0.95 }}
+-              onClick={() => setIsMonthlyReportOpen(true)}
+-              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-white font-black uppercase tracking-widest text-[10px] shadow-sm hover:shadow-md transition-all no-print"
+-            >
+-              <FileText className="w-4 h-4" />
+-              Monthly
+-            </motion.button>
+ 
+-            <motion.button
+-              whileHover={{ scale: 1.05 }}
+-              whileTap={{ scale: 0.95 }}
+-              onClick={() => setIsMonthEndSummaryOpen(true)}
+-              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 font-black uppercase tracking-widest text-[10px] shadow-sm hover:shadow-md transition-all no-print"
+-            >
+-              <FileText className="w-4 h-4" />
+-              Month End
+-            </motion.button>
+ 
+             <motion.button
+               whileHover={{ scale: 1.05 }}
+               whileTap={{ scale: 0.95 }}
+               onClick={() => setIsBankModalOpen(true)}
+-              className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-blue-600 text-white font-black uppercase tracking-widest text-[10px] shadow-lg hover:shadow-xl transition-all"
++              className="hidden sm:flex items-center gap-2 px-6 py-3 rounded-2xl bg-blue-600 text-white font-black uppercase tracking-widest text-[10px] shadow-lg hover:shadow-xl hover:shadow-blue-600/20 transition-all"
+             >
+               <Building2 className="w-4 h-4" strokeWidth={3} />
+               Bank Entry
+@@ -165,7 +128,7 @@ export default function MonthDetailPage() {
+               whileHover={{ scale: 1.05 }}
+               whileTap={{ scale: 0.95 }}
+               onClick={() => setIsModalOpen(true)}
+-              className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-black text-white dark:bg-white dark:text-black font-black uppercase tracking-widest text-[10px] shadow-lg hover:shadow-xl transition-all"
++              className="hidden sm:flex items-center gap-2 px-6 py-3 rounded-2xl bg-emerald-500 text-white font-black uppercase tracking-widest text-[10px] shadow-lg hover:shadow-xl hover:shadow-emerald-500/20 transition-all"
+             >
+               <Plus className="w-4 h-4" strokeWidth={3} />
+               Add Entry
+@@ -173,89 +136,114 @@ export default function MonthDetailPage() {
+           </div>
+         </div>
+ 
+-        <div className="mb-8 lg:mb-16">
+-          <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black tracking-tighter text-foreground mb-1">{month.name}</h1>
+-          <p className="text-sm lg:text-lg text-muted-foreground font-bold uppercase tracking-widest italic">{toBanglaNumeral(month.year)} Financial Overview</p>
++        <div className="mb-8 lg:mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
++          <div>
++            <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black tracking-tighter text-foreground mb-1 uppercase">{month.name}</h1>
++            <p className="text-sm lg:text-lg text-muted-foreground font-bold uppercase tracking-[0.2em]">{toBanglaNumeral(month.year)} Financial Report</p>
++          </div>
++
++          {/* Quick Reports Hub placed stylishly beside the title */}
++          <div className="flex flex-wrap items-center gap-2 sm:gap-3 bg-muted/30 p-2 rounded-[24px] border border-border/50 no-print">
++            <button
++              onClick={() => setIsReportModalOpen(true)}
++              className="flex items-center gap-2 px-4 py-2.5 rounded-xl hover:bg-white dark:hover:bg-zinc-900 text-foreground font-black uppercase tracking-widest text-[10px] hover:shadow-sm transition-all"
++            >
++              <Printer className="w-4 h-4 text-slate-500" />
++              Daily
++            </button>
++            <button
++              onClick={() => setIsSummaryModalOpen(true)}
++              className="flex items-center gap-2 px-4 py-2.5 rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400 font-black uppercase tracking-widest text-[10px] hover:shadow-sm transition-all"
++            >
++              <BarChart3 className="w-4 h-4 text-indigo-500" />
++              Summary
++            </button>
++            <button
++              onClick={() => setIsMonthlyReportOpen(true)}
++              className="flex items-center gap-2 px-4 py-2.5 rounded-xl hover:bg-white dark:hover:bg-zinc-900 text-foreground font-black uppercase tracking-widest text-[10px] hover:shadow-sm transition-all"
++            >
++              <FileText className="w-4 h-4 text-slate-500" />
++              Monthly
++            </button>
++            <button
++              onClick={() => setIsMonthEndSummaryOpen(true)}
++              className="flex items-center gap-2 px-4 py-2.5 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-950/30 text-amber-700 dark:text-amber-500 font-black uppercase tracking-widest text-[10px] hover:shadow-sm transition-all"
++            >
++              <FileText className="w-4 h-4 text-amber-500" />
++              Month End
++            </button>
++          </div>
+         </div>
+ 
+-        {/* Smaller Header Cards */}
+-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+-          {/* Opening Balance Card */}
+-          <div className="group bg-white dark:bg-black p-6 rounded-[32px] border border-border card-shadow flex items-center justify-between">
+-            <div className="flex items-center gap-4 w-full">
+-              <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-600">
+-                <Wallet className="w-5 h-5" />
+-              </div>
+-              <div className="flex-1">
+-                <div className="flex items-center justify-between">
+-                  <p className="text-[10px] lg:text-xs font-black uppercase tracking-widest text-muted-foreground">Original Opening</p>
+-                  <button onClick={startEditingOpening} className="p-1 hover:bg-muted rounded transition-colors text-muted-foreground">
+-                    <Edit2 className="w-3 h-3" />
++        {/* V2 Dashboard Layout */}
++        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-16">
++          {/* Left Column: KPI Cards */}
++          <div className="flex flex-col gap-6 xl:col-span-2">
++            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
++              {/* Opening Balance Card */}
++              <div className="p-6 sm:p-8 rounded-[32px] bg-blue-50 dark:bg-blue-950/20 border-2 border-blue-100 dark:border-blue-900/30 shadow-sm flex flex-col justify-center relative overflow-hidden group">
++                <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
++                  <Wallet className="w-24 h-24 text-blue-500" />
++                </div>
++                <div className="flex items-center justify-between mb-2">
++                  <p className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-500">Opening Balance</p>
++                  <button onClick={startEditingOpening} className="p-2 hover:bg-blue-200/50 dark:hover:bg-blue-900/50 rounded-xl transition-colors text-blue-600 dark:text-blue-400 z-10 relative">
++                    <Edit2 className="w-4 h-4" />
+                   </button>
+                 </div>
+                 {isEditingOpening ? (
+-                  <div className="flex items-center gap-2 mt-1">
++                  <div className="flex items-center gap-2 mt-1 z-10 relative">
+                     <input 
+                       type="number" 
+                       value={newOpeningBalance}
+                       onChange={(e) => setNewOpeningBalance(e.target.value)}
+-                      className="w-full bg-background border border-border rounded-lg px-2 py-1 text-sm font-bold outline-none"
++                      className="w-full bg-white dark:bg-black border border-blue-200 dark:border-blue-800 rounded-xl px-4 py-3 text-lg font-bold outline-none"
+                       autoFocus
+                     />
+-                    <button onClick={handleUpdateOpening} className="p-1 text-emerald-500"><Check className="w-4 h-4" /></button>
+-                    <button onClick={() => setIsEditingOpening(false)} className="p-1 text-rose-500"><CloseIcon className="w-4 h-4" /></button>
++                    <button onClick={handleUpdateOpening} className="p-3 bg-emerald-500 text-white rounded-xl shadow-md"><Check className="w-5 h-5" /></button>
++                    <button onClick={() => setIsEditingOpening(false)} className="p-3 bg-rose-500 text-white rounded-xl shadow-md"><CloseIcon className="w-5 h-5" /></button>
+                   </div>
+                 ) : (
+-                  <h2 className="text-xl lg:text-3xl font-black tracking-tight">{formatBanglaAmount(month.openingBalance || 0)}</h2>
++                  <h2 className="text-3xl sm:text-4xl font-black text-blue-900 dark:text-blue-400">৳ {formatBanglaAmount(month.openingBalance || 0)}</h2>
+                 )}
+               </div>
+-            </div>
+-          </div>
+ 
+-          {/* Income Card */}
+-          <div className="group bg-white dark:bg-black p-6 rounded-[32px] border border-border card-shadow flex items-center justify-between">
+-            <div className="flex items-center gap-4">
+-              <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-600">
+-                <ArrowUpRight className="w-5 h-5" />
+-              </div>
+-              <div>
+-                <p className="text-[10px] lg:text-xs font-black uppercase tracking-widest text-muted-foreground">Total Income</p>
+-                <h2 className="text-xl lg:text-3xl font-black tracking-tight">
+-                  {formatBanglaAmount(month.income || 0)}
++              {/* Net Balance Card */}
++              <div className="p-6 sm:p-8 rounded-[32px] bg-slate-900 dark:bg-white border-2 border-slate-900 dark:border-white shadow-2xl flex flex-col justify-center relative overflow-hidden group">
++                <div className="absolute top-0 right-0 p-6 opacity-10 transition-opacity">
++                  <CreditCard className="w-24 h-24 text-white dark:text-black" />
++                </div>
++                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2">Net Balance</p>
++                <h2 className="text-3xl sm:text-4xl font-black text-white dark:text-black">
++                  ৳ {formatBanglaAmount((month.openingBalance || 0) + (month.income || 0) - (month.costing || 0))}
+                 </h2>
+               </div>
+             </div>
+-          </div>
+ 
+-          {/* Costing Card */}
+-          <div className="group bg-white dark:bg-black p-6 rounded-[32px] border border-border card-shadow flex items-center justify-between">
+-            <div className="flex items-center gap-4">
+-              <div className="p-3 rounded-2xl bg-rose-500/10 text-rose-600">
+-                <ArrowDownRight className="w-5 h-5" />
++            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
++              {/* Income Card */}
++              <div className="p-6 sm:p-8 rounded-[32px] bg-emerald-50 dark:bg-emerald-950/20 border-2 border-emerald-100 dark:border-emerald-900/30 shadow-sm flex flex-col justify-center relative overflow-hidden group">
++                <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
++                  <ArrowUpRight className="w-24 h-24 text-emerald-500" />
++                </div>
++                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-500 mb-2">Total Income</p>
++                <h2 className="text-3xl sm:text-4xl font-black text-emerald-900 dark:text-emerald-400">৳ {formatBanglaAmount(month.income || 0)}</h2>
+               </div>
+-              <div>
+-                <p className="text-[10px] lg:text-xs font-black uppercase tracking-widest text-muted-foreground">Total Costing</p>
+-                <h2 className="text-xl lg:text-3xl font-black tracking-tight">
+-                  {formatBanglaAmount(month.costing || 0)}
+-                </h2>
++
++              {/* Costing Card */}
++              <div className="p-6 sm:p-8 rounded-[32px] bg-rose-50 dark:bg-rose-950/20 border-2 border-rose-100 dark:border-rose-900/30 shadow-sm flex flex-col justify-center relative overflow-hidden group">
++                <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
++                  <ArrowDownRight className="w-24 h-24 text-rose-500" />
++                </div>
++                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-rose-600 dark:text-rose-500 mb-2">Total Expense</p>
++                <h2 className="text-3xl sm:text-4xl font-black text-rose-900 dark:text-rose-400">৳ {formatBanglaAmount(month.costing || 0)}</h2>
+               </div>
+             </div>
+           </div>
+ 
+-          {/* Net Balance Card */}
+-          <div className="group bg-slate-900 dark:bg-white p-6 rounded-[32px] border border-transparent shadow-xl flex items-center justify-between overflow-hidden relative">
+-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+-            <div className="flex items-center gap-4 relative z-10">
+-              <div className="p-3 rounded-2xl bg-white/20 dark:bg-black/10 text-white dark:text-black">
+-                <CreditCard className="w-5 h-5" />
+-              </div>
+-              <div>
+-                <p className="text-[10px] lg:text-xs font-black uppercase tracking-widest text-white/60 dark:text-black/60">Net Balance</p>
+-                <h2 className="text-2xl lg:text-4xl font-black tracking-tight text-white dark:text-black">
+-                  {formatBanglaAmount((month.openingBalance || 0) + (month.income || 0) - (month.costing || 0))}
+-                </h2>
+-              </div>
+-            </div>
++          {/* Right Column: Chart */}
++          <div className="xl:col-span-1 h-full min-h-[300px]">
++            <MonthChart income={month.income || 0} costing={month.costing || 0} />
+           </div>
+         </div>
+ 
+@@ -267,20 +255,24 @@ export default function MonthDetailPage() {
+               <h2 className="text-lg lg:text-3xl font-black tracking-tight uppercase italic text-muted-foreground">আয় এর বিবরণ / খাত সমূহ</h2>
+             </div>
+             
+-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 lg:gap-5">
++            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4">
+               {INCOME_CATEGORIES.map((category, i) => (
+                 <motion.div
+                   key={category}
+                   initial={{ opacity: 0, y: 10 }}
+                   animate={{ opacity: 1, y: 0 }}
+-                  transition={{ delay: i * 0.05 }}
++                  transition={{ delay: i * 0.03 }}
+                 >
+                   <Link 
+                     href={`/month/${month.id}/income/${encodeURIComponent(category)}`}
+-                    className="w-full h-full flex items-center justify-between p-5 rounded-2xl bg-white dark:bg-black border border-border hover:border-emerald-500 hover:bg-emerald-500/5 hover:shadow-lg hover:shadow-emerald-500/5 transition-all group"
++                    className="w-full h-full flex flex-col justify-between p-4 rounded-3xl bg-white dark:bg-[#0a0a0a] border border-border/50 hover:border-emerald-500 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/20 shadow-sm hover:shadow-[0_10px_30px_rgba(16,185,129,0.15)] transition-all duration-300 group min-h-[90px]"
+                   >
+-                    <span className="font-bold text-foreground text-sm lg:text-lg group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{category}</span>
+-                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-emerald-500 transition-colors" />
++                    <div className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
++                      <ArrowUpRight className="w-4 h-4 text-emerald-500" />
++                    </div>
++                    <div className="flex items-end justify-between gap-2 mt-auto">
++                      <span className="font-bold text-foreground text-xs leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{category}</span>
++                    </div>
+                   </Link>
+                 </motion.div>
+               ))}
+@@ -294,22 +286,25 @@ export default function MonthDetailPage() {
+                <h2 className="text-lg lg:text-3xl font-black tracking-tight uppercase italic text-muted-foreground">ব্যয় এর বিবরণ / খাত সমূহ</h2>
+              </div>
+              
+-             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 lg:gap-5">
++             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4">
+                {COSTING_CATEGORIES.map((category, i) => {
+-                 const dynamicCategory = category.replace('(মাস-সাল)', `(${month.name}-${month.year})`);
+                  return (
+                    <motion.div
+                      key={category}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+-                     transition={{ delay: i * 0.05 }}
++                     transition={{ delay: i * 0.03 }}
+                    >
+                      <Link 
+-                       href={`/month/${month.id}/cost/${encodeURIComponent(dynamicCategory)}`}
+-                       className="w-full h-full flex items-center justify-between p-5 rounded-2xl bg-white dark:bg-black border border-border hover:border-rose-500 hover:bg-rose-500/10 hover:shadow-lg hover:shadow-rose-500/5 transition-all group"
++                       href={`/month/${month.id}/cost/${encodeURIComponent(category)}`}
++                       className="w-full h-full flex flex-col justify-between p-4 rounded-3xl bg-white dark:bg-[#0a0a0a] border border-border/50 hover:border-rose-500 hover:bg-rose-50/50 dark:hover:bg-rose-950/20 shadow-sm hover:shadow-[0_10px_30px_rgba(244,63,94,0.15)] transition-all duration-300 group min-h-[90px]"
+                      >
+-                       <span className="font-bold text-foreground text-sm lg:text-lg group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">{dynamicCategory}</span>
+-                       <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-rose-500 transition-colors" />
++                       <div className="w-8 h-8 rounded-full bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
++                         <ArrowDownRight className="w-4 h-4 text-rose-500" />
++                       </div>
++                       <div className="flex items-end justify-between gap-2 mt-auto">
++                         <span className="font-bold text-foreground text-xs leading-tight group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">{category}</span>
++                       </div>
+                      </Link>
+                    </motion.div>
+                  );
+@@ -324,20 +319,24 @@ export default function MonthDetailPage() {
+               <h2 className="text-lg lg:text-3xl font-black tracking-tight uppercase italic text-muted-foreground">ব্যবসায়িক ব্যাংক হিসাব (Bank Accounts)</h2>
+             </div>
+             
+-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 lg:gap-5">
++            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4">
+               {BANK_CATEGORIES.map((category, i) => (
+                 <motion.div
+                   key={category}
+                   initial={{ opacity: 0, y: 10 }}
+                   animate={{ opacity: 1, y: 0 }}
+-                  transition={{ delay: i * 0.05 }}
++                  transition={{ delay: i * 0.03 }}
+                 >
+                   <Link 
+                     href={`/month/${month.id}/bank/${encodeURIComponent(category)}`}
+-                    className="w-full h-full flex items-center justify-between p-5 rounded-2xl bg-white dark:bg-black border border-border hover:border-blue-500 hover:bg-blue-500/10 hover:shadow-lg hover:shadow-blue-500/5 transition-all group"
++                    className="w-full h-full flex flex-col justify-between p-4 rounded-3xl bg-white dark:bg-[#0a0a0a] border border-border/50 hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 shadow-sm hover:shadow-[0_10px_30px_rgba(59,130,246,0.15)] transition-all duration-300 group min-h-[90px]"
+                   >
+-                    <span className="font-bold text-foreground text-sm lg:text-lg group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1">{category}</span>
+-                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-blue-500 transition-colors" />
++                    <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
++                      <Building2 className="w-4 h-4 text-blue-500" />
++                    </div>
++                    <div className="flex items-end justify-between gap-2 mt-auto">
++                      <span className="font-bold text-foreground text-xs leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{category}</span>
++                    </div>
+                   </Link>
+                 </motion.div>
+               ))}
+@@ -346,6 +345,26 @@ export default function MonthDetailPage() {
+         </div>
+       </main>
+ 
++      {/* Mobile Sticky FABs */}
++      <div className="sm:hidden fixed bottom-6 left-4 right-4 z-40 flex gap-3">
++        <motion.button
++          whileTap={{ scale: 0.95 }}
++          onClick={() => setIsBankModalOpen(true)}
++          className="flex-1 flex items-center justify-center gap-2 py-4 rounded-[20px] bg-blue-600 text-white font-black uppercase tracking-widest text-[11px] shadow-[0_8px_30px_rgba(37,99,235,0.4)] border border-white/20"
++        >
++          <Building2 className="w-5 h-5" />
++          Bank
++        </motion.button>
++        <motion.button
++          whileTap={{ scale: 0.95 }}
++          onClick={() => setIsModalOpen(true)}
++          className="flex-1 flex items-center justify-center gap-2 py-4 rounded-[20px] bg-emerald-600 text-white font-black uppercase tracking-widest text-[11px] shadow-[0_8px_30px_rgba(16,185,129,0.4)] border border-white/20"
++        >
++          <Plus className="w-5 h-5" strokeWidth={3} />
++          Add Entry
++        </motion.button>
++      </div>
++
+       <AddTransactionModal 
+         monthId={month.id}
+         monthName={month.name}
+@@ -357,6 +376,8 @@ export default function MonthDetailPage() {
+ 
+       <AddBankTransactionModal 
+         monthId={month.id}
++        monthName={month.name}
++        monthYear={month.year}
+         isOpen={isBankModalOpen}
+         onSuccess={fetchData}
+         onClose={() => setIsBankModalOpen(false)}
+diff --git a/src/components/AddBankTransactionModal.tsx b/src/components/AddBankTransactionModal.tsx
+index 1a672f3..81f5606 100644
+--- a/src/components/AddBankTransactionModal.tsx
++++ b/src/components/AddBankTransactionModal.tsx
+@@ -17,10 +17,14 @@ import { format } from 'date-fns';
+ import { cn } from '@/lib/utils';
+ import { addTransaction } from '@/lib/actions';
+ import { useRouter } from 'next/navigation';
++import { toast } from 'sonner';
+ import { BANK_CATEGORIES } from '@/lib/constants';
++import SearchableSelect from './SearchableSelect';
+ 
+ interface AddBankTransactionModalProps {
+   monthId: number;
++  monthName: string;
++  monthYear: number;
+   isOpen: boolean;
+   onClose: () => void;
+   onSuccess?: () => void;
+@@ -28,6 +32,8 @@ interface AddBankTransactionModalProps {
+ 
+ export default function AddBankTransactionModal({ 
+   monthId, 
++  monthName,
++  monthYear,
+   isOpen, 
+   onClose, 
+   onSuccess 
+@@ -44,6 +50,23 @@ export default function AddBankTransactionModal({
+     e.preventDefault();
+     if (!amount) return;
+ 
++    // Date Validation
++    const monthIndexMap: Record<string, number> = {
++      January: 0, February: 1, March: 2, April: 3, May: 4, June: 5,
++      July: 6, August: 7, September: 8, October: 9, November: 10, December: 11
++    };
++    
++    const selectedDate = new Date(date);
++    const expectedMonthIndex = monthIndexMap[monthName];
++    
++    if (selectedDate.getFullYear() !== monthYear || selectedDate.getMonth() !== expectedMonthIndex) {
++      toast.error(`অ্যামাউন্টটি ${monthName} ${monthYear} এর হিসাবে সেভ করা হচ্ছে। দয়া করে তারিখটি ${monthName} ${monthYear} এর মধ্যেই সিলেক্ট করুন।`, {
++        duration: 5000,
++        style: { fontSize: '14px', fontWeight: 'bold' }
++      });
++      return;
++    }
++
+     setIsLoading(true);
+     const res = await addTransaction({
+       monthId,
+@@ -68,7 +91,7 @@ export default function AddBankTransactionModal({
+   if (!isOpen) return null;
+ 
+   return (
+-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
++    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+       <motion.div 
+         initial={{ opacity: 0 }}
+         animate={{ opacity: 1 }}
+@@ -78,10 +101,10 @@ export default function AddBankTransactionModal({
+       />
+       
+       <motion.div
+-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
++        initial={{ opacity: 0, scale: 0.95, y: 100 }}
+         animate={{ opacity: 1, scale: 1, y: 0 }}
+-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+-        className="relative w-full max-w-lg bg-white/90 dark:bg-[#050505]/90 backdrop-blur-xl rounded-[32px] sm:rounded-[40px] border border-white/20 dark:border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col max-h-[96vh]"
++        exit={{ opacity: 0, scale: 0.95, y: 100 }}
++        className="relative w-full max-w-lg bg-white/95 dark:bg-[#050505]/95 backdrop-blur-xl rounded-t-[32px] sm:rounded-[40px] border border-white/20 dark:border-white/10 shadow-[0_-8px_32px_-16px_rgba(0,0,0,0.3)] sm:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col max-h-[90vh] pb-safe"
+       >
+         <div className="relative p-6 md:p-8 overflow-y-auto custom-scrollbar">
+           <div className="flex justify-between items-start mb-6 md:mb-8">
+@@ -144,21 +167,15 @@ export default function AddBankTransactionModal({
+             </div>
+ 
+             {/* Category Selection */}
+-            <div className="space-y-2">
++            <div className="space-y-2 z-40 relative">
+               <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">ব্যাংক হিসাব (Bank Account)</label>
+-              <div className="relative group">
+-                <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg bg-muted text-muted-foreground group-focus-within:text-foreground transition-colors">
+-                  <Building2 className="w-4 h-4" />
+-                </div>
+-                <select
+-                  value={category}
+-                  onChange={(e) => setCategory(e.target.value)}
+-                  className="w-full pl-14 pr-12 py-3.5 sm:py-4 rounded-2xl bg-muted/30 border border-border/50 focus:border-foreground focus:bg-background outline-none font-bold text-sm appearance-none transition-all cursor-pointer"
+-                >
+-                  {BANK_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+-                </select>
+-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none group-focus-within:rotate-180 transition-transform duration-300" />
+-              </div>
++              <SearchableSelect
++                icon={<Building2 className="w-4 h-4" />}
++                value={category}
++                onChange={(val) => setCategory(val)}
++                options={BANK_CATEGORIES.map(cat => ({ value: cat, label: cat }))}
++                placeholder="Select bank account..."
++              />
+             </div>
+ 
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+@@ -184,6 +201,8 @@ export default function AddBankTransactionModal({
+                   <input
+                     type="number"
+                     required
++                    inputMode="decimal"
++                    pattern="[0-9]*"
+                     placeholder="0.00"
+                     value={amount}
+                     onChange={(e) => setAmount(e.target.value)}
+diff --git a/src/components/AddTransactionModal.tsx b/src/components/AddTransactionModal.tsx
+index ff77b3a..21e1c14 100644
+--- a/src/components/AddTransactionModal.tsx
++++ b/src/components/AddTransactionModal.tsx
+@@ -18,8 +18,10 @@ import { format } from 'date-fns';
+ import { cn } from '@/lib/utils';
+ import { addTransaction } from '@/lib/actions';
+ import { useRouter } from 'next/navigation';
++import { toast } from 'sonner';
+ 
+ import { INCOME_CATEGORIES, COSTING_CATEGORIES, WEIGHT_TRACKED_CATEGORIES, getSuggestions } from '@/lib/constants';
++import SearchableSelect from './SearchableSelect';
+ 
+ interface AddTransactionModalProps {
+   monthId: number;
+@@ -69,18 +71,30 @@ export default function AddTransactionModal({ monthId, monthName, monthYear, isO
+     e.preventDefault();
+     if (!amount) return;
+ 
+-    // Dynamically replace (মাস-সাল) for costing categories
+-    const finalCategory = type === 'costing' 
+-      ? category.replace('(মাস-সাল)', `(${monthName}-${monthYear})`)
+-      : category;
++    // Date Validation
++    const monthIndexMap: Record<string, number> = {
++      January: 0, February: 1, March: 2, April: 3, May: 4, June: 5,
++      July: 6, August: 7, September: 8, October: 9, November: 10, December: 11
++    };
++    
++    const selectedDate = new Date(date);
++    const expectedMonthIndex = monthIndexMap[monthName];
++    
++    if (selectedDate.getFullYear() !== monthYear || selectedDate.getMonth() !== expectedMonthIndex) {
++      toast.error(`অ্যামাউন্টটি ${monthName} ${monthYear} এর হিসাবে সেভ করা হচ্ছে। দয়া করে তারিখটি ${monthName} ${monthYear} এর মধ্যেই সিলেক্ট করুন।`, {
++        duration: 5000,
++        style: { fontSize: '14px', fontWeight: 'bold' }
++      });
++      return;
++    }
+ 
+     setIsLoading(true);
+     const res = await addTransaction({
+       monthId,
+       type,
+-      category: finalCategory,
++      category,
+       date: new Date(date),
+-      description: description || finalCategory,
++      description: description || category,
+       amount: parseInt(amount),
+       weight: isWeightCategory ? weight : undefined,
+     });
+@@ -100,7 +114,7 @@ export default function AddTransactionModal({ monthId, monthName, monthYear, isO
+   if (!isOpen) return null;
+ 
+   return (
+-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
++    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+       <motion.div 
+         initial={{ opacity: 0 }}
+         animate={{ opacity: 1 }}
+@@ -110,10 +124,10 @@ export default function AddTransactionModal({ monthId, monthName, monthYear, isO
+       />
+       
+       <motion.div
+-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
++        initial={{ opacity: 0, scale: 0.95, y: 100 }}
+         animate={{ opacity: 1, scale: 1, y: 0 }}
+-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+-        className="relative w-full max-w-lg bg-white/90 dark:bg-[#050505]/90 backdrop-blur-xl rounded-[32px] sm:rounded-[40px] border border-white/20 dark:border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col max-h-[96vh]"
++        exit={{ opacity: 0, scale: 0.95, y: 100 }}
++        className="relative w-full max-w-lg bg-white/95 dark:bg-[#050505]/95 backdrop-blur-xl rounded-t-[32px] sm:rounded-[40px] border border-white/20 dark:border-white/10 shadow-[0_-8px_32px_-16px_rgba(0,0,0,0.3)] sm:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col max-h-[90vh] pb-safe"
+       >
+         <div className="relative p-6 md:p-8 overflow-y-auto custom-scrollbar">
+           <div className="flex justify-between items-start mb-6 md:mb-8">
+@@ -176,28 +190,21 @@ export default function AddTransactionModal({ monthId, monthName, monthYear, isO
+             </div>
+ 
+             {/* Category Selection */}
+-            <div className="space-y-2">
++            <div className="space-y-2 z-40 relative">
+               <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">খাত সমূহ (Category)</label>
+-              <div className="relative group">
+-                <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg bg-muted text-muted-foreground group-focus-within:text-foreground transition-colors">
+-                  <Tag className="w-4 h-4" />
+-                </div>
+-                <select
+-                  value={category}
+-                  onChange={(e) => setCategory(e.target.value)}
+-                  className="w-full pl-14 pr-12 py-3.5 sm:py-4 rounded-2xl bg-muted/30 border border-border/50 focus:border-foreground focus:bg-background outline-none font-bold text-sm appearance-none transition-all cursor-pointer"
+-                >
+-                  {type === 'income' 
+-                    ? [...INCOME_CATEGORIES].sort((a, b) => a.localeCompare(b, 'bn')).map(cat => <option key={cat} value={cat}>{cat}</option>)
+-                    : [...COSTING_CATEGORIES].sort((a, b) => a.localeCompare(b, 'bn')).map(cat => (
+-                        <option key={cat} value={cat}>
+-                          {cat.replace('(মাস-সাল)', `(${monthName}-${monthYear})`)}
+-                        </option>
+-                      ))
+-                  }
+-                </select>
+-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none group-focus-within:rotate-180 transition-transform duration-300" />
+-              </div>
++              <SearchableSelect
++                icon={<Tag className="w-4 h-4" />}
++                value={category}
++                onChange={(val) => setCategory(val)}
++                options={
++                  type === 'income'
++                    ? [...INCOME_CATEGORIES].sort((a, b) => a.localeCompare(b, 'bn')).map(cat => ({ value: cat, label: cat }))
++                    : [...COSTING_CATEGORIES].sort((a, b) => a.localeCompare(b, 'bn')).map(cat => ({
++                        value: cat,
++                        label: cat
++                      }))
++                }
++              />
+             </div>
+ 
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+@@ -223,6 +230,8 @@ export default function AddTransactionModal({ monthId, monthName, monthYear, isO
+                   <input
+                     type="number"
+                     required
++                    inputMode="decimal"
++                    pattern="[0-9]*"
+                     placeholder="0.00"
+                     value={amount}
+                     onChange={(e) => setAmount(e.target.value)}
+@@ -232,6 +241,32 @@ export default function AddTransactionModal({ monthId, monthName, monthYear, isO
+               </div>
+             </div>
+ 
++            {/* Suggestion Chips - Huge and Obvious */}
++            {suggestions.length > 0 && (
++              <div className="bg-indigo-50/50 dark:bg-indigo-950/10 border border-indigo-100 dark:border-indigo-900/30 rounded-2xl p-4 mb-2">
++                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 mb-3 flex items-center gap-2">
++                  <span className="relative flex h-2 w-2">
++                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
++                    <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
++                  </span>
++                  Quick Select (Auto Fill)
++                </label>
++                <div className="grid grid-cols-2 gap-2">
++                  {suggestions.map((sug) => (
++                    <button
++                      key={sug}
++                      type="button"
++                      onClick={() => setDescription(sug)}
++                      className="px-3 py-3 rounded-xl bg-white dark:bg-indigo-950 hover:bg-indigo-50 dark:hover:bg-indigo-900 text-xs font-black text-indigo-700 dark:text-indigo-300 transition-all border border-indigo-100 dark:border-indigo-800 active:scale-95 shadow-sm flex items-center justify-center text-center leading-tight min-h-[48px]"
++                      title={sug}
++                    >
++                      {truncateToWords(sug, 4)}
++                    </button>
++                  ))}
++                </div>
++              </div>
++            )}
++
+             {/* Description */}
+             <div className="space-y-2">
+               <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">বিবরণ (Description)</label>
+@@ -245,23 +280,6 @@ export default function AddTransactionModal({ monthId, monthName, monthYear, isO
+                   className="w-full pl-11 pr-4 py-3.5 sm:py-4 rounded-2xl bg-muted/30 border border-border/50 focus:border-foreground focus:bg-background outline-none font-bold text-sm resize-none transition-all placeholder:text-muted-foreground/30"
+                 />
+               </div>
+-              
+-              {/* Suggestion Chips */}
+-              {suggestions.length > 0 && (
+-                <div className="flex flex-wrap gap-2 mt-2 ml-1">
+-                  {suggestions.map((sug) => (
+-                    <button
+-                      key={sug}
+-                      type="button"
+-                      onClick={() => setDescription(sug)}
+-                      className="px-3 py-1.5 rounded-xl bg-muted/50 hover:bg-muted text-[11px] font-bold text-muted-foreground hover:text-foreground transition-all border border-border/30 hover:border-border/60 active:scale-95"
+-                      title={sug}
+-                    >
+-                      {truncateToWords(sug, 3)}
+-                    </button>
+-                  ))}
+-                </div>
+-              )}
+             </div>
+ 
+             {/* Weight (Only for gold category) */}
+@@ -279,6 +297,7 @@ export default function AddTransactionModal({ monthId, monthName, monthYear, isO
+                     <input
+                       type="number"
+                       step="0.01"
++                      inputMode="decimal"
+                       placeholder="0.00g"
+                       value={weight}
+                       onChange={(e) => setWeight(e.target.value)}
+diff --git a/src/components/BankTransactionTable.tsx b/src/components/BankTransactionTable.tsx
+index 52f56a2..f0cc9a5 100644
+--- a/src/components/BankTransactionTable.tsx
++++ b/src/components/BankTransactionTable.tsx
+@@ -351,17 +351,17 @@ export default function BankTransactionTable({
+         </button>
+       </div>
+ 
+-      <div className="w-full bg-white dark:bg-black rounded-xl border border-border shadow-sm overflow-hidden text-foreground">
+-        <div className="overflow-x-auto">
++      <div className="w-full bg-white dark:bg-[#0a0a0a] rounded-[24px] lg:rounded-[32px] border-2 border-blue-100 dark:border-blue-900/30 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none overflow-hidden text-foreground transition-all">
++        <div className="overflow-x-auto custom-scrollbar">
+           <table className="w-full text-left border-collapse print-table">
+             <thead>
+-              <tr className="bg-slate-50 dark:bg-zinc-900/50 border-b border-border">
+-                <th className="px-5 lg:px-8 py-4 lg:py-6 text-[11px] lg:text-[14px] font-black uppercase tracking-wider text-slate-500 border-r border-border/50 w-36 lg:w-48">তারিখ (Date)</th>
+-                <th className="px-5 lg:px-8 py-4 lg:py-6 text-[11px] lg:text-[14px] font-black uppercase tracking-wider text-slate-500 border-r border-border/50">বিবরণ (Description)</th>
+-                <th className="px-5 lg:px-8 py-4 lg:py-6 text-[11px] lg:text-[14px] font-black uppercase tracking-wider text-slate-500 border-r border-border/50 w-32 lg:w-44">ধরন (Type)</th>
+-                <th className="px-5 lg:px-8 py-4 lg:py-6 text-[11px] lg:text-[14px] font-black uppercase tracking-wider text-rose-500 border-r border-border/50 w-40 lg:w-56">ডেবিট (Withdrawal)</th>
+-                <th className="px-5 lg:px-8 py-4 lg:py-6 text-[11px] lg:text-[14px] font-black uppercase tracking-wider text-emerald-600 border-r border-border/50 w-40 lg:w-56">ক্রেডিট (Deposit)</th>
+-                <th className="px-5 lg:px-8 py-4 lg:py-6 text-[11px] lg:text-[14px] font-black uppercase tracking-wider text-slate-500 w-24 text-right no-print">অ্যাকশন</th>
++              <tr className="border-b-2 border-border/50 bg-blue-50/50 dark:bg-blue-950/20 transition-colors">
++                <th className="px-5 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground border-r border-border/30 w-36 lg:w-48">তারিখ (Date)</th>
++                <th className="px-5 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground border-r border-border/30">বিবরণ (Description)</th>
++                <th className="px-5 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground border-r border-border/30 w-32 lg:w-44 text-center">ধরন (Type)</th>
++                <th className="px-5 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground border-r border-border/30 w-40 lg:w-48 text-right">ডেবিট (Debit)</th>
++                <th className="px-5 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground border-r border-border/30 w-40 lg:w-48 text-right">ক্রেডিট (Credit)</th>
++                <th className="px-5 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground w-28 text-center no-print">অ্যাকশন</th>
+               </tr>
+             </thead>
+             <tbody className="divide-y divide-border/50">
+@@ -420,7 +420,7 @@ export default function BankTransactionTable({
+                         </span>
+                       )}
+                     </td>
+-                    <td className="px-5 py-4 border-r border-border/30 text-rose-600 font-bold">
++                    <td className="px-5 py-4 border-r border-border/30 text-rose-600 font-black text-right">
+                       {editingId === item.id ? (
+                         <div className="flex flex-col gap-1">
+                           <input 
+@@ -431,34 +431,34 @@ export default function BankTransactionTable({
+                           />
+                         </div>
+                       ) : (
+-                        item.type === 'costing' ? `৳ ${formatBanglaAmount(item.amount)}` : '-'
++                        item.type === 'costing' ? <span className="text-base lg:text-2xl tracking-tighter">৳ {formatBanglaAmount(item.amount)}</span> : '-'
+                       )}
+                     </td>
+-                    <td className="px-5 py-4 border-r border-border/30 text-emerald-600 font-bold">
++                    <td className="px-5 py-4 border-r border-border/30 text-emerald-600 font-black text-right">
+                        {editingId === item.id ? (
+                         <span className="text-[10px] opacity-40 italic">Linked to Amount</span>
+                        ) : (
+-                        item.type === 'income' ? `৳ ${formatBanglaAmount(item.amount)}` : '-'
++                        item.type === 'income' ? <span className="text-base lg:text-2xl tracking-tighter">৳ {formatBanglaAmount(item.amount)}</span> : '-'
+                        )}
+                     </td>
+-                    <td className="px-5 py-4 text-right no-print">
+-                      <div className="flex items-center justify-end gap-1.5">
++                    <td className="px-5 py-4 text-center no-print">
++                      <div className="flex items-center justify-center gap-1.5">
+                         {editingId === item.id ? (
+                           <>
+-                            <button onClick={() => handleSaveEdit(item.id)} className="p-1.5 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-black hover:opacity-80">
+-                              <Check className="w-3.5 h-3.5" />
++                            <button onClick={() => handleSaveEdit(item.id)} className="p-2 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-black hover:opacity-80 transition-opacity">
++                              <Check className="w-4 h-4" />
+                             </button>
+-                            <button onClick={() => setEditingId(null)} className="p-1.5 rounded-lg border border-border">
+-                              <X className="w-3.5 h-3.5" />
++                            <button onClick={() => setEditingId(null)} className="p-2 rounded-xl border border-border hover:bg-muted transition-colors">
++                              <X className="w-4 h-4" />
+                             </button>
+                           </>
+                         ) : (
+                           <>
+-                            <button onClick={() => startEditing(item)} className="p-2 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+-                              <Edit2 className="w-3.5 h-3.5" />
++                            <button onClick={() => startEditing(item)} className="p-2 rounded-xl text-muted-foreground hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors">
++                              <Edit2 className="w-4 h-4" />
+                             </button>
+-                            <button onClick={() => handleDelete(item.id)} className="p-2 rounded-lg text-slate-400 hover:text-red-500 transition-colors">
+-                              <Trash2 className="w-3.5 h-3.5" />
++                            <button onClick={() => handleDelete(item.id)} className="p-2 rounded-xl text-muted-foreground hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors">
++                              <Trash2 className="w-4 h-4" />
+                             </button>
+                           </>
+                         )}
+@@ -469,13 +469,13 @@ export default function BankTransactionTable({
+               </AnimatePresence>
+ 
+               {/* Add New Row */}
+-              <tr className="bg-slate-50/80 dark:bg-zinc-900/80 no-print border-t-2 border-border/80">
++              <tr className="no-print border-t-2 border-border/80 shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] bg-blue-50/40 dark:bg-blue-950/20">
+                 <td className="px-5 py-5 border-r border-border/30">
+                   <input 
+                     type="date" 
+                     value={newDate}
+                     onChange={(e) => setNewDate(e.target.value)}
+-                    className="w-full bg-white dark:bg-zinc-800 border border-border rounded-lg px-2.5 py-2 text-xs font-mono"
++                    className="w-full bg-white dark:bg-zinc-900 border border-border rounded-xl px-4 py-3 text-sm font-mono font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                   />
+                 </td>
+                 <td className="px-5 py-5 border-r border-border/30">
+@@ -484,41 +484,38 @@ export default function BankTransactionTable({
+                     placeholder="Entry details..."
+                     value={newDesc}
+                     onChange={(e) => setNewDesc(e.target.value)}
+-                    className="w-full bg-white dark:bg-zinc-800 border border-border rounded-lg px-3.5 py-2 text-sm font-semibold"
++                    className="w-full bg-white dark:bg-zinc-900 border border-border rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50"
+                   />
+                 </td>
+                 <td className="px-5 py-5 border-r border-border/30">
+                   <select 
+                     value={newType} 
+                     onChange={(e) => setNewType(e.target.value as 'income' | 'costing')}
+-                    className="w-full bg-white dark:bg-zinc-800 border border-border rounded-lg px-2 py-2 text-xs font-bold"
++                    className="w-full bg-white dark:bg-zinc-900 border border-border rounded-xl px-2 py-3 text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all"
+                   >
+                       <option value="income">Credit (জমা)</option>
+                       <option value="costing">Debit (উত্তোলন)</option>
+                   </select>
+                 </td>
+                 <td colSpan={2} className="px-5 py-5 border-r border-border/30">
+-                  <div className="relative">
+-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">৳</span>
++                  <div className="relative group">
++                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-black text-muted-foreground group-focus-within:text-foreground transition-colors">৳</span>
+                     <input 
+                       type="number" 
+                       placeholder="Amount..."
+                       value={newAmount}
+                       onChange={(e) => setNewAmount(e.target.value)}
+-                      className="w-full bg-white dark:bg-zinc-800 border border-border rounded-lg pl-7 pr-3.5 py-2 text-sm font-bold"
++                      className="w-full bg-white dark:bg-zinc-900 border border-border rounded-xl pl-8 pr-4 py-3 text-sm font-black outline-none focus:ring-2 focus:ring-primary/20 transition-all text-right placeholder:text-muted-foreground/50"
+                     />
+                   </div>
+                 </td>
+-                <td className="px-5 py-5 text-right no-print">
++                <td className="px-5 py-5 text-center no-print">
+                   <button 
+                     onClick={handleAdd}
+                     disabled={!newAmount}
+-                    className={cn(
+-                      "flex items-center justify-center w-full py-2 rounded-lg font-bold text-xs uppercase tracking-widest transition-all",
+-                      newType === 'income' ? "bg-emerald-600 text-white" : "bg-rose-600 text-white"
+-                    )}
++                    className="flex items-center justify-center w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 shadow-blue-600/20 text-white font-black text-[11px] uppercase tracking-[0.2em] disabled:opacity-30 transition-all shadow-md active:scale-95"
+                   >
+-                    <Plus className="w-3.5 h-3.5 mr-1" strokeWidth={3} />
++                    <Plus className="w-4 h-4 mr-1" strokeWidth={3} />
+                     Add
+                   </button>
+                 </td>
+@@ -526,25 +523,29 @@ export default function BankTransactionTable({
+             </tbody>
+             <tfoot>
+               {/* Row 1: Totals */}
+-              <tr className="bg-slate-100 dark:bg-zinc-800 border-t-2 border-slate-900 dark:border-white h-20">
+-                <td colSpan={3} className="px-5 py-0 border-r border-border/20 text-right">
+-                    <span className="text-[10px] font-black uppercase text-slate-500 block">সারসংক্ষেপ</span>
+-                    <span className="text-sm font-black uppercase text-slate-900 dark:text-white">মোট হিসাব (Totals)</span>
++              <tr className="border-t-2 border-border h-24 bg-blue-50/50 dark:bg-blue-950/40 transition-colors">
++                <td colSpan={3} className="px-5 lg:px-8 py-0 border-r border-border/20 text-right">
++                  <div className="flex flex-col">
++                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mb-1 italic opacity-50">Aggregate Total</span>
++                    <span className="text-sm lg:text-lg font-black uppercase tracking-tighter text-blue-700 dark:text-blue-400">
++                      মোট হিসাব (Totals)
++                    </span>
++                  </div>
+                 </td>
+-                <td className="px-5 py-0 text-xl lg:text-3xl font-black text-rose-600 border-r border-border/20">
++                <td className="px-5 lg:px-8 py-0 text-2xl lg:text-4xl font-black text-rose-600 border-r border-border/20 text-right tracking-tighter">
+                   ৳ {formatBanglaAmount(totalDebit)}
+                 </td>
+-                <td className="px-5 py-0 text-xl lg:text-3xl font-black text-emerald-600 border-r border-border/20">
++                <td className="px-5 lg:px-8 py-0 text-2xl lg:text-4xl font-black text-emerald-600 border-r border-border/20 text-right tracking-tighter">
+                   ৳ {formatBanglaAmount(totalCredit)}
+                 </td>
+                 <td className="no-print"></td>
+               </tr>
+               {/* Row 2: Balance */}
+-              <tr className="bg-slate-50 dark:bg-zinc-900 h-16 border-t border-border/30">
+-                <td colSpan={4} className="px-5 py-0 border-r border-border/20 text-right">
+-                    <span className="text-sm font-black uppercase tracking-tighter text-muted-foreground italic">Net Balance (Credit - Debit)</span>
++              <tr className="h-16 bg-blue-100/50 dark:bg-blue-900/30 border-t border-border/30">
++                <td colSpan={4} className="px-5 lg:px-8 py-0 border-r border-border/20 text-right">
++                    <span className="text-xs lg:text-sm font-black uppercase tracking-[0.2em] text-blue-600/70 dark:text-blue-400/70">Net Balance</span>
+                 </td>
+-                <td className="px-5 py-0 text-2xl lg:text-6xl font-black text-blue-600 tracking-tighter">
++                <td className="px-5 lg:px-8 py-0 text-3xl lg:text-5xl font-black text-blue-600 tracking-tighter text-right">
+                    ৳ {formatBanglaAmount(totalCredit - totalDebit)}
+                 </td>
+                 <td className="no-print"></td>
+diff --git a/src/components/DashboardChart.tsx b/src/components/DashboardChart.tsx
+new file mode 100644
+index 0000000..ce5ae24
+--- /dev/null
++++ b/src/components/DashboardChart.tsx
+@@ -0,0 +1,104 @@
++"use client";
++
++import { useMemo } from "react";
++import {
++  AreaChart,
++  Area,
++  XAxis,
++  YAxis,
++  CartesianGrid,
++  Tooltip,
++  ResponsiveContainer,
++} from "recharts";
++import { formatBanglaAmount } from "@/lib/utils/bangla-date";
++
++interface MonthData {
++  id: number;
++  name: string;
++  year: number;
++  income: number | null;
++  costing: number | null;
++}
++
++export default function DashboardChart({ months }: { months: MonthData[] }) {
++  const chartData = useMemo(() => {
++    // Reverse the months so it shows chronologically
++    return [...months].reverse().map((m) => ({
++      name: `${m.name.substring(0, 3)} '${m.year.toString().slice(2)}`,
++      Income: m.income || 0,
++      Expense: m.costing || 0,
++    }));
++  }, [months]);
++
++  if (months.length === 0) return null;
++
++  return (
++    <div className="w-full bg-white dark:bg-[#0a0a0a] border border-border rounded-[32px] p-6 lg:p-8 shadow-sm flex flex-col justify-between h-full">
++      <div className="mb-8">
++        <h3 className="text-xl font-black text-foreground uppercase tracking-wider">Cash Flow Overview</h3>
++        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">Income vs Expense (Last {months.length} Months)</p>
++      </div>
++      <div className="w-full h-[300px]">
++        <ResponsiveContainer width="100%" height="100%">
++          <AreaChart
++            data={chartData}
++            margin={{
++              top: 10,
++              right: 10,
++              left: -10,
++              bottom: 0,
++            }}
++          >
++            <defs>
++              <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
++                <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
++                <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
++              </linearGradient>
++              <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
++                <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.3} />
++                <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
++              </linearGradient>
++            </defs>
++            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#3f3f46" opacity={0.2} />
++            <XAxis 
++              dataKey="name" 
++              axisLine={false} 
++              tickLine={false} 
++              tick={{ fontSize: 12, fontWeight: 700, fill: '#71717a' }} 
++              dy={15}
++            />
++            <YAxis 
++              axisLine={false} 
++              tickLine={false} 
++              tickFormatter={(value) => `৳${(value / 100000).toFixed(1)}L`}
++              tick={{ fontSize: 12, fontWeight: 700, fill: '#71717a' }}
++              dx={-15}
++            />
++            <Tooltip
++              contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)', fontWeight: 'bold' }}
++              itemStyle={{ fontWeight: 900 }}
++              labelStyle={{ color: '#71717a', marginBottom: '8px' }}
++              formatter={(value: number, name: string) => [`৳ ${formatBanglaAmount(value)}`, name]}
++            />
++            <Area
++              type="monotone"
++              dataKey="Income"
++              stroke="#10b981"
++              strokeWidth={4}
++              fillOpacity={1}
++              fill="url(#colorIncome)"
++            />
++            <Area
++              type="monotone"
++              dataKey="Expense"
++              stroke="#f43f5e"
++              strokeWidth={4}
++              fillOpacity={1}
++              fill="url(#colorExpense)"
++            />
++          </AreaChart>
++        </ResponsiveContainer>
++      </div>
++    </div>
++  );
++}
+diff --git a/src/components/GlobalBankAccountManager.tsx b/src/components/GlobalBankAccountManager.tsx
+index b8daddd..0a76a47 100644
+--- a/src/components/GlobalBankAccountManager.tsx
++++ b/src/components/GlobalBankAccountManager.tsx
+@@ -47,95 +47,110 @@ export default function GlobalBankAccountManager() {
+ 
+   return (
+     <>
+-      <div className="mb-12">
+-        <div className="flex items-center gap-3 mb-6">
+-          <div className="p-3 bg-blue-500/10 text-blue-600 rounded-2xl">
+-            <Building2 className="w-6 h-6" />
++      <div className="mb-12 relative">
++        {/* Subtle background glow */}
++        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-32 bg-blue-500/10 blur-[100px] rounded-full pointer-events-none" />
++        
++        <div className="flex items-center gap-4 mb-8 relative z-10 px-2">
++          <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-3xl shadow-lg shadow-blue-500/20">
++            <Building2 className="w-8 h-8" strokeWidth={2.5} />
+           </div>
+           <div>
+-            <h2 className="text-2xl font-black tracking-tight text-foreground">Global Bank Accounts</h2>
+-            <p className="text-sm text-muted-foreground font-bold uppercase tracking-widest">Manage Initial Balances & Statements</p>
++            <h2 className="text-3xl lg:text-4xl font-black tracking-tighter uppercase text-foreground">Global Bank Accounts</h2>
++            <p className="text-xs text-muted-foreground font-black uppercase tracking-[0.3em] mt-1">Manage Balances & Statements</p>
+           </div>
+         </div>
+ 
+-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
++        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+           {banks.map((bank) => (
+             <motion.div 
+-              initial={{ opacity: 0, y: 10 }}
++              initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               key={bank.category} 
+-              className="bg-card border border-border p-5 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col"
++              className="bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border border-white/20 dark:border-white/10 p-6 rounded-[32px] shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-all duration-300 flex flex-col group relative overflow-hidden"
+             >
+-              <div className="flex justify-between items-start mb-4">
+-                <h3 className="font-bold text-foreground text-sm leading-tight line-clamp-2 pr-4">{bank.category}</h3>
+-                <div className="p-2 bg-muted rounded-xl text-muted-foreground shrink-0">
+-                  <Building2 className="w-4 h-4" />
++              {/* Card Accent Gradient */}
++              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-all group-hover:bg-blue-500/10" />
++
++              <div className="flex justify-between items-start mb-6 relative z-10">
++                <h3 className="font-black text-foreground text-sm uppercase tracking-wider leading-relaxed pr-4 line-clamp-2">{bank.category}</h3>
++                <div className="p-3 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-2xl shrink-0 group-hover:scale-110 transition-transform shadow-sm">
++                  <Building2 className="w-5 h-5" />
+                 </div>
+               </div>
+ 
+               <div className="flex-1" />
+ 
+-              <div className="bg-muted/50 p-3 rounded-2xl mb-4 border border-border">
+-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-1">Initial Starting Balance</p>
++              {/* Initial Balance Section */}
++              <div className="bg-muted/30 p-4 rounded-[24px] mb-4 border border-border/50 relative z-10">
++                <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-black mb-2 flex items-center gap-2">
++                  <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
++                  Initial Balance
++                </p>
+                 {editingBank === bank.category ? (
+                   <div className="flex items-center gap-2">
+                     <input 
+                       type="number"
+                       value={editValue}
+                       onChange={(e) => setEditValue(e.target.value)}
+-                      className="w-full bg-background border border-border rounded-lg px-3 py-1.5 text-sm font-bold outline-none"
++                      className="w-full bg-background border border-border/50 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-xl px-4 py-3 text-sm font-black outline-none transition-all"
+                       autoFocus
+                     />
+                     <button 
+                       onClick={() => handleSave(bank.category)} 
+                       disabled={isSaving}
+-                      className="p-1.5 bg-emerald-500 text-white rounded-lg disabled:opacity-50"
++                      className="p-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl disabled:opacity-50 transition-colors shadow-md shadow-emerald-500/20"
+                     >
+-                      <Save className="w-4 h-4" />
++                      <Save className="w-5 h-5" />
+                     </button>
+                     <button 
+                       onClick={() => setEditingBank(null)} 
+-                      className="p-1.5 bg-rose-100 text-rose-500 rounded-lg"
++                      className="p-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl transition-colors shadow-md shadow-rose-500/20"
+                     >
+-                      <X className="w-4 h-4" />
++                      <X className="w-5 h-5" />
+                     </button>
+                   </div>
+                 ) : (
+                   <div className="flex items-center justify-between group/edit">
+-                    <span className="font-black text-lg text-foreground">
+-                      {formatBanglaAmount(bank.initialBalance)}
++                    <span className="font-black text-xl text-foreground tracking-tight">
++                      ৳ {formatBanglaAmount(bank.initialBalance)}
+                     </span>
+                     <button 
+                       onClick={() => handleEditClick(bank.category, bank.initialBalance)}
+-                      className="p-1 text-muted-foreground hover:text-foreground opacity-50 group-hover/edit:opacity-100 transition-all"
++                      className="p-2 bg-white dark:bg-zinc-800 border border-border/50 text-muted-foreground hover:text-blue-600 hover:border-blue-500/30 rounded-xl opacity-0 translate-x-2 group-hover/edit:opacity-100 group-hover/edit:translate-x-0 transition-all shadow-sm"
+                     >
+-                      <Edit2 className="w-3.5 h-3.5" />
++                      <Edit2 className="w-4 h-4" />
+                     </button>
+                   </div>
+                 )}
+               </div>
+ 
+-              <div className="bg-slate-900 dark:bg-white p-3 rounded-2xl mb-4 shadow-inner border border-transparent">
+-                <p className="text-[10px] uppercase tracking-widest text-slate-400 dark:text-zinc-500 font-bold mb-1">Current Balance</p>
++              {/* Current Balance Section */}
++              <div className="bg-gradient-to-br from-slate-900 to-black dark:from-slate-100 dark:to-white p-5 rounded-[24px] mb-6 shadow-xl relative z-10 overflow-hidden">
++                <div className="absolute right-0 top-0 w-32 h-32 bg-white/5 dark:bg-black/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
++                <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 font-black mb-2 flex items-center gap-2">
++                  <Activity className="w-3 h-3 text-emerald-400 dark:text-emerald-600" />
++                  Current Balance
++                </p>
+                 <div className="flex items-center gap-2">
+-                  <Activity className="w-4 h-4 text-emerald-400 dark:text-emerald-500" />
+-                  <span className="font-black text-xl text-white dark:text-black">
+-                    {formatBanglaAmount((bank as any).currentBalance || bank.initialBalance)}
++                  <span className="font-black text-3xl text-white dark:text-black tracking-tighter">
++                    ৳ {formatBanglaAmount((bank as any).currentBalance || bank.initialBalance)}
+                   </span>
+                 </div>
+               </div>
+ 
+-              <div className="flex-1" />
+-
++              {/* Statement Button */}
+               <button 
+                 onClick={() => setSelectedStatementBank(bank.category)}
+-                className="w-full flex items-center justify-between px-4 py-2.5 bg-slate-900 text-white dark:bg-white dark:text-black rounded-xl hover:scale-[1.02] transition-transform font-bold text-xs uppercase tracking-widest"
++                className="w-full flex items-center justify-between px-5 py-4 bg-muted/50 hover:bg-blue-600 text-foreground hover:text-white rounded-[20px] transition-all duration-300 font-black text-[10px] uppercase tracking-[0.2em] relative z-10 group/btn"
+               >
+-                <div className="flex items-center gap-2">
++                <div className="flex items-center gap-3">
+                   <FileText className="w-4 h-4" />
+                   View Full Statement
+                 </div>
+-                <ChevronRight className="w-4 h-4" />
++                <div className="p-1 bg-background/50 rounded-lg group-hover/btn:bg-white/20 transition-colors">
++                  <ChevronRight className="w-4 h-4" />
++                </div>
+               </button>
+             </motion.div>
+           ))}
+diff --git a/src/components/MonthCard.tsx b/src/components/MonthCard.tsx
+index 6dcd1fe..e22566c 100644
+--- a/src/components/MonthCard.tsx
++++ b/src/components/MonthCard.tsx
+@@ -1,6 +1,6 @@
+ 'use client';
+ 
+-import { Folder, ChevronRight, ArrowUpRight, ArrowDownRight } from 'lucide-react';
++import { TrendingUp, TrendingDown, ArrowRight, Wallet } from 'lucide-react';
+ import { motion } from 'framer-motion';
+ import Link from 'next/link';
+ import { formatBanglaAmount, toBanglaNumeral } from '@/lib/utils/bangla-date';
+@@ -14,51 +14,67 @@ interface MonthCardProps {
+ }
+ 
+ export default function MonthCard({ id, name, year, income, costing }: MonthCardProps) {
++  const net = income - costing;
++
+   return (
+     <motion.div
+-      whileHover={{ y: -4, scale: 1.01 }}
++      whileHover={{ y: -6, scale: 1.02 }}
+       whileTap={{ scale: 0.98 }}
+       className="group h-full"
+     >
+       <Link href={`/month/${id}`} className="block relative h-full">
+-        {/* Minimal Folder Tab */}
+-        <div className="absolute -top-2.5 left-6 w-12 h-3 bg-muted border border-b-0 border-border rounded-t-lg group-hover:bg-foreground group-hover:border-foreground transition-all duration-300" />
+-        
+-        <div className="bg-white dark:bg-black rounded-[32px] p-7 lg:p-9 border border-border group-hover:border-primary group-hover:bg-primary/[0.02] transition-all duration-300 h-full flex flex-col shadow-sm group-hover:shadow-xl group-hover:shadow-primary/5">
+-          <div className="flex justify-between items-start mb-8">
+-            <div className="p-3 rounded-2xl bg-muted text-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-sm group-hover:shadow-md">
+-              <Folder className="w-5 h-5" fill="currentColor" fillOpacity={0.2} />
++        <div className="relative overflow-hidden rounded-[32px] p-6 lg:p-8 bg-slate-900 dark:bg-[#0a0a0a] text-white border-2 border-slate-800 dark:border-zinc-800 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] group-hover:border-indigo-500/50 group-hover:shadow-[0_20px_50px_-10px_rgba(99,102,241,0.4)] transition-all duration-500 h-full flex flex-col z-10">
++          
++          {/* Glowing Orb Background */}
++          <div className="absolute -top-24 -right-24 w-64 h-64 bg-indigo-500 rounded-full mix-blend-screen filter blur-[80px] opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
++          <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-emerald-500 rounded-full mix-blend-screen filter blur-[80px] opacity-10 group-hover:opacity-30 transition-opacity duration-500" />
++
++          {/* Card Header */}
++          <div className="flex justify-between items-start mb-6 relative z-10">
++            <div className="flex items-center gap-2">
++              <Wallet className="w-6 h-6 text-indigo-400" />
++              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Monthly Ledger</span>
+             </div>
+             <div className="text-right">
+-              <h3 className="text-xl lg:text-3xl font-black tracking-tight text-foreground">{name}</h3>
+-              <p className="text-xs lg:text-sm font-bold text-muted-foreground uppercase tracking-widest mt-1">{toBanglaNumeral(year.toString())}</p>
++              <h3 className="text-xl lg:text-2xl font-black tracking-tight">{name}</h3>
++              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5">{toBanglaNumeral(year.toString())}</p>
+             </div>
+           </div>
+ 
+-          <div className="mt-auto space-y-4">
+-            <div className="flex items-center justify-between py-2 border-b border-border/50">
+-              <div className="flex items-center gap-2 text-muted-foreground">
+-                <ArrowUpRight className="w-4 h-4" />
+-                <span className="text-xs font-bold uppercase tracking-tight">Income</span>
++          {/* Main Balance (Like a Card Number) */}
++          <div className="my-6 relative z-10">
++            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-500 mb-2">Monthly Net Flow</p>
++            <h2 className="text-3xl lg:text-4xl font-black tracking-tighter tabular-nums drop-shadow-md">
++              {net >= 0 ? '+' : '-'} ৳{formatBanglaAmount(Math.abs(net))}
++            </h2>
++          </div>
++
++          {/* Footer Stats */}
++          <div className="mt-auto pt-6 border-t border-slate-800/50 flex justify-between items-end relative z-10">
++            <div className="space-y-3">
++              <div className="flex items-center gap-2">
++                <div className="p-1.5 rounded-full bg-emerald-500/20 text-emerald-400">
++                  <TrendingUp className="w-3 h-3" />
++                </div>
++                <div>
++                  <p className="text-[8px] font-black uppercase tracking-widest text-slate-500">Income</p>
++                  <p className="text-xs font-bold">৳{formatBanglaAmount(income)}</p>
++                </div>
+               </div>
+-              <span className="text-sm font-black text-foreground">
+-                {income > 0 ? `৳${formatBanglaAmount(income)}` : '৳০'}
+-              </span>
+-            </div>
+-            
+-            <div className="flex items-center justify-between py-2">
+-              <div className="flex items-center gap-2 text-muted-foreground">
+-                <ArrowDownRight className="w-4 h-4" />
+-                <span className="text-xs font-bold uppercase tracking-tight">Costing</span>
++              <div className="flex items-center gap-2">
++                <div className="p-1.5 rounded-full bg-rose-500/20 text-rose-400">
++                  <TrendingDown className="w-3 h-3" />
++                </div>
++                <div>
++                  <p className="text-[8px] font-black uppercase tracking-widest text-slate-500">Expense</p>
++                  <p className="text-xs font-bold">৳{formatBanglaAmount(costing)}</p>
++                </div>
+               </div>
+-              <span className="text-sm font-black text-foreground">
+-                {costing > 0 ? `৳${formatBanglaAmount(costing)}` : '৳০'}
+-              </span>
+             </div>
+-          </div>
+ 
+-          <div className="mt-6 flex items-center justify-end text-[10px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">
+-            <ChevronRight className="w-4 h-4" />
++            <div className="w-12 h-12 rounded-2xl bg-indigo-500 text-white flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-indigo-400 transition-all">
++              <ArrowRight className="w-5 h-5" />
++            </div>
+           </div>
+         </div>
+       </Link>
+diff --git a/src/components/MonthChart.tsx b/src/components/MonthChart.tsx
+new file mode 100644
+index 0000000..18aa31a
+--- /dev/null
++++ b/src/components/MonthChart.tsx
+@@ -0,0 +1,72 @@
++"use client";
++
++import { useMemo } from "react";
++import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
++import { formatBanglaAmount } from "@/lib/utils/bangla-date";
++
++interface MonthChartProps {
++  income: number;
++  costing: number;
++}
++
++export default function MonthChart({ income, costing }: MonthChartProps) {
++  const data = useMemo(() => {
++    return [
++      { name: "Income", value: income, color: "#10b981" }, // emerald-500
++      { name: "Expense", value: costing, color: "#f43f5e" }, // rose-500
++    ];
++  }, [income, costing]);
++
++  const total = income + costing;
++
++  if (total === 0) {
++    return (
++      <div className="w-full h-full min-h-[300px] flex items-center justify-center bg-slate-50 dark:bg-zinc-950/50 rounded-[32px] border-2 border-dashed border-border/50">
++        <p className="text-muted-foreground font-bold text-sm uppercase tracking-widest">No Transactions Yet</p>
++      </div>
++    );
++  }
++
++  return (
++    <div className="w-full h-full min-h-[300px] bg-slate-900 dark:bg-[#0a0a0a] rounded-[32px] p-6 shadow-2xl relative overflow-hidden flex flex-col items-center justify-center border-2 border-slate-800/50 dark:border-zinc-800">
++      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
++      <h3 className="text-white font-black uppercase tracking-widest text-xs mb-4 z-10 text-center">Cash Flow Distribution</h3>
++      <div className="w-full h-[220px] z-10">
++        <ResponsiveContainer width="100%" height="100%">
++          <PieChart>
++            <Pie
++              data={data}
++              cx="50%"
++              cy="50%"
++              innerRadius={65}
++              outerRadius={85}
++              paddingAngle={5}
++              dataKey="value"
++              stroke="none"
++              cornerRadius={10}
++            >
++              {data.map((entry, index) => (
++                <Cell key={`cell-${index}`} fill={entry.color} />
++              ))}
++            </Pie>
++            <Tooltip
++              formatter={(value: number) => [`৳ ${formatBanglaAmount(value)}`, ""]}
++              contentStyle={{ borderRadius: '16px', border: 'none', backgroundColor: '#fff', color: '#000', fontWeight: 'bold', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)' }}
++              itemStyle={{ color: '#000' }}
++            />
++          </PieChart>
++        </ResponsiveContainer>
++      </div>
++      <div className="flex gap-6 mt-4 z-10">
++        <div className="flex items-center gap-2">
++          <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
++          <span className="text-[10px] font-black uppercase tracking-widest text-slate-300">Income</span>
++        </div>
++        <div className="flex items-center gap-2">
++          <div className="w-3 h-3 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
++          <span className="text-[10px] font-black uppercase tracking-widest text-slate-300">Expense</span>
++        </div>
++      </div>
++    </div>
++  );
++}
+diff --git a/src/components/MonthEndSummaryModal.tsx b/src/components/MonthEndSummaryModal.tsx
+index 059f136..3e3d341 100644
+--- a/src/components/MonthEndSummaryModal.tsx
++++ b/src/components/MonthEndSummaryModal.tsx
+@@ -309,13 +309,18 @@ export default function MonthEndSummaryModal({ monthId, isOpen, onClose }: Month
+                    PRINTABLE AREA — inline styles only inside here
+                    ================================================ */
+                 <div ref={printAreaRef}
+-                  style={{ fontFamily: "'Noto Serif Bengali', 'SolaimanLipi', serif", fontSize: "11px", color: "#000", background: "#fff", minWidth: "680px" }}>
++                  style={{ position: "relative", fontFamily: "'Noto Serif Bengali', 'SolaimanLipi', serif", fontSize: "11px", color: "#000", background: "#fff", minWidth: "680px", padding: "20px" }}>
++                  
++                  {/* Watermark Overlay */}
++                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10, pointerEvents: "none" }}>
++                    <img src="/logo.png" style={{ width: "600px", opacity: 0.08, filter: "grayscale(100%)" }} alt="Watermark" />
++                  </div>
+ 
+                   {/* === COMPANY HEADER === */}
+-                  <div style={{ textAlign: "center", borderBottom: "4px double #000", paddingBottom: "6px", marginBottom: "8px" }}>
+-                    <h1 style={{ fontSize: "18px", fontWeight: 900, margin: 0, letterSpacing: "1.5px" }}>{COMPANY_NAME}</h1>
+-                    <p style={{ fontSize: "11px", fontWeight: 700, margin: "2px 0 0", color: "#374151" }}>এক নজরে মাসিক আয় ও ব্যয়ের বিবরণ</p>
+-                    <p style={{ fontSize: "10px", margin: "1px 0 0", color: "#4b5563" }}>
++                  <div style={{ textAlign: "center", borderBottom: "3px solid #000", paddingBottom: "10px", marginBottom: "12px", position: "relative", zIndex: 1 }}>
++                    <h1 style={{ fontSize: "22px", fontWeight: 900, margin: 0, letterSpacing: "2px", textTransform: "uppercase" }}>{COMPANY_NAME}</h1>
++                    <p style={{ fontSize: "12px", fontWeight: 700, margin: "4px 0 0", color: "#1f2937", borderTop: "1px solid #000", display: "inline-block", paddingTop: "2px" }}>এক নজরে মাসিক আয় ও ব্যয়ের বিবরণ</p>
++                    <p style={{ fontSize: "11px", margin: "2px 0 0", color: "#4b5563", fontWeight: 600 }}>
+                       ({month?.name} {toBanglaNumeral(month?.year)} সাল)
+                     </p>
+                   </div>
+@@ -387,25 +392,20 @@ export default function MonthEndSummaryModal({ monthId, isOpen, onClose }: Month
+                           const val = costingByCategory?.[costCat] || 0;
+                           return val as number;
+                         })();
+-                        const isAdjustmentIncome = incCat && (incCat.includes("ব্যাংক হতে প্রাপ্ত লভ্যাংশ"));
+-                        const isAdjustmentCost = costCat && (costCat.includes("ব্যাংক এর মাধ্যমে পেমেন্ট") || costCat.includes("ব্যাংক এর আবগারি শুল্ক"));
+-                        
+-                        const rowBg = idx % 2 === 1 ? "#fafafa" : "#fff";
+-                        const incBg = isAdjustmentIncome ? "#f0fdf4" : "transparent"; // Light green for bank income
+-                        const costBg = isAdjustmentCost ? "#fff7ed" : "transparent"; // Light orange for bank costing
++                        const rowBg = idx % 2 === 1 ? "#f8fafc" : "#ffffff";
+                         
+                         return (
+                           <tr key={idx} style={{ background: rowBg }}>
+-                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", fontSize: "9.5px", backgroundColor: incBg }}>
++                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", fontSize: "9.5px" }}>
+                               {incCat ? incCat.replace(/\(মাস-সাল\)/g, "").trim() : ""}
+                             </td>
+-                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", textAlign: "right", fontSize: "9.5px", fontWeight: incAmt > 0 ? 700 : 400, backgroundColor: incBg }}>
++                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", textAlign: "right", fontSize: "9.5px", fontWeight: incAmt > 0 ? 700 : 400 }}>
+                               {incCat ? (incAmt > 0 ? formatBanglaAmount(incAmt) : "—") : ""}
+                             </td>
+-                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", fontSize: "9.5px", backgroundColor: costBg }}>
++                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", fontSize: "9.5px" }}>
+                               {costCat ? costCat.replace(/\(মাস-সাল\)/g, "").trim() : ""}
+                             </td>
+-                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", textAlign: "right", fontSize: "9.5px", fontWeight: costAmt > 0 ? 700 : 400, backgroundColor: costBg }}>
++                            <td style={{ border: "1px solid #000", padding: "1.5px 4px", textAlign: "right", fontSize: "9.5px", fontWeight: costAmt > 0 ? 700 : 400 }}>
+                               {costCat ? (costAmt > 0 ? formatBanglaAmount(costAmt) : "—") : ""}
+                             </td>
+                           </tr>
+diff --git a/src/components/MonthlyReportModal.tsx b/src/components/MonthlyReportModal.tsx
+index 7486b44..da3fb4c 100644
+--- a/src/components/MonthlyReportModal.tsx
++++ b/src/components/MonthlyReportModal.tsx
+@@ -236,30 +236,30 @@ export default function MonthlyReportModal({
+                       <div className="overflow-x-auto custom-scrollbar w-full">
+                         <table className="w-full text-left border-collapse table-fixed min-w-[500px]">
+                           <thead>
+-                          <tr className="bg-slate-900 text-white">
+-                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-r border-slate-700">তারিখ</th>
+-                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-r border-slate-700 text-right">আগের স্থিতি</th>
+-                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-r border-slate-700 text-right">আয়</th>
+-                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-r border-slate-700 text-right">ব্যয়</th>
+-                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 text-right">বর্তমান স্থিতি</th>
++                          <tr className="bg-slate-100 text-slate-700 dark:bg-zinc-900 dark:text-zinc-300">
++                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-b border-slate-200 dark:border-zinc-800">তারিখ</th>
++                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-b border-slate-200 dark:border-zinc-800 text-right">আগের স্থিতি</th>
++                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-b border-slate-200 dark:border-zinc-800 text-right">আয়</th>
++                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-b border-slate-200 dark:border-zinc-800 text-right">ব্যয়</th>
++                            <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] w-1/5 border-b border-slate-200 dark:border-zinc-800 text-right">বর্তমান স্থিতি</th>
+                           </tr>
+                         </thead>
+                         <tbody className="divide-y divide-slate-100">
+                           {reportData.map((day, idx) => (
+-                            <tr key={idx} className="hover:bg-slate-50 transition-colors even:bg-slate-50/30">
+-                              <td className="px-4 py-3 font-black text-xs border-r border-slate-100">
++                            <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-zinc-900/50 transition-colors even:bg-slate-50/50 dark:even:bg-zinc-900/30">
++                              <td className="px-4 py-3 font-black text-xs border-b border-slate-100 dark:border-zinc-800">
+                                 {formatBanglaDate(day.date)}
+                               </td>
+-                              <td className="px-4 py-3 font-bold text-sm text-right border-r border-slate-100 text-slate-500">
++                              <td className="px-4 py-3 font-bold text-sm text-right border-b border-slate-100 dark:border-zinc-800 text-slate-500">
+                                 {formatBanglaAmount(day.opening)}
+                               </td>
+-                              <td className="px-4 py-3 font-black text-sm text-right border-r border-slate-100 text-emerald-600">
++                              <td className="px-4 py-3 font-black text-sm text-right border-b border-slate-100 dark:border-zinc-800 text-emerald-600">
+                                 + {formatBanglaAmount(day.income)}
+                               </td>
+-                              <td className="px-4 py-3 font-black text-sm text-right border-r border-slate-100 text-rose-600">
++                              <td className="px-4 py-3 font-black text-sm text-right border-b border-slate-100 dark:border-zinc-800 text-rose-600">
+                                 - {formatBanglaAmount(day.costing)}
+                               </td>
+-                              <td className="px-4 py-3 font-black text-base text-right bg-slate-50/50">
++                              <td className="px-4 py-3 font-black text-base text-right border-b border-slate-100 dark:border-zinc-800 bg-slate-50/50 dark:bg-transparent">
+                                 {formatBanglaAmount(day.closing)}
+                               </td>
+                             </tr>
+diff --git a/src/components/SearchableSelect.tsx b/src/components/SearchableSelect.tsx
+new file mode 100644
+index 0000000..99dfd14
+--- /dev/null
++++ b/src/components/SearchableSelect.tsx
+@@ -0,0 +1,111 @@
++"use client";
++
++import { useState, useRef, useEffect } from 'react';
++import { motion, AnimatePresence } from 'framer-motion';
++import { ChevronDown, Search, Check } from 'lucide-react';
++import { cn } from '@/lib/utils';
++
++interface SearchableSelectProps {
++  options: { value: string; label: string }[];
++  value: string;
++  onChange: (value: string) => void;
++  placeholder?: string;
++  icon?: React.ReactNode;
++}
++
++export default function SearchableSelect({ options, value, onChange, placeholder = "Select...", icon }: SearchableSelectProps) {
++  const [isOpen, setIsOpen] = useState(false);
++  const [search, setSearch] = useState('');
++  const wrapperRef = useRef<HTMLDivElement>(null);
++
++  useEffect(() => {
++    function handleClickOutside(event: MouseEvent) {
++      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
++        setIsOpen(false);
++      }
++    }
++    document.addEventListener("mousedown", handleClickOutside);
++    return () => document.removeEventListener("mousedown", handleClickOutside);
++  }, [wrapperRef]);
++
++  const filteredOptions = options.filter(opt => 
++    opt.label.toLowerCase().includes(search.toLowerCase()) || 
++    opt.value.toLowerCase().includes(search.toLowerCase())
++  );
++
++  const selectedOption = options.find(opt => opt.value === value);
++
++  return (
++    <div className="relative w-full" ref={wrapperRef}>
++      <div 
++        className={cn(
++          "w-full pl-14 pr-12 py-3.5 sm:py-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between font-bold text-sm",
++          isOpen 
++            ? "bg-background border-indigo-500 shadow-[0_0_0_4px_rgba(99,102,241,0.1)]" 
++            : "bg-muted/30 border-border/50 hover:border-border"
++        )}
++        onClick={() => setIsOpen(!isOpen)}
++      >
++        <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg bg-muted text-muted-foreground">
++          {icon}
++        </div>
++        <span className="truncate flex-1 text-left text-foreground">
++          {selectedOption ? selectedOption.label : placeholder}
++        </span>
++        <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-300", isOpen && "rotate-180")} />
++      </div>
++
++      <AnimatePresence>
++        {isOpen && (
++          <motion.div
++            initial={{ opacity: 0, y: -10, scale: 0.95 }}
++            animate={{ opacity: 1, y: 0, scale: 1 }}
++            exit={{ opacity: 0, y: -10, scale: 0.95 }}
++            transition={{ duration: 0.15 }}
++            className="absolute z-50 w-full mt-2 bg-white dark:bg-zinc-950 border border-border/50 rounded-2xl shadow-2xl overflow-hidden"
++          >
++            <div className="p-2 border-b border-border/50 relative bg-muted/20">
++              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
++              <input
++                autoFocus
++                type="text"
++                placeholder="Search category..."
++                value={search}
++                onChange={(e) => setSearch(e.target.value)}
++                className="w-full pl-10 pr-4 py-2.5 bg-background border border-border/50 rounded-xl outline-none text-sm font-bold focus:border-indigo-500/50 transition-colors placeholder:text-muted-foreground/50"
++                onClick={(e) => e.stopPropagation()}
++              />
++            </div>
++            <div className="max-h-[240px] overflow-y-auto custom-scrollbar p-1.5 bg-background">
++              {filteredOptions.length > 0 ? (
++                filteredOptions.map((opt) => (
++                  <div
++                    key={opt.value}
++                    className={cn(
++                      "px-3 py-3 rounded-xl cursor-pointer text-[13px] font-bold flex items-center justify-between transition-colors mb-1 last:mb-0",
++                      value === opt.value 
++                        ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300" 
++                        : "hover:bg-muted/50 text-foreground"
++                    )}
++                    onClick={() => {
++                      onChange(opt.value);
++                      setIsOpen(false);
++                      setSearch('');
++                    }}
++                  >
++                    <span className="truncate pr-4" title={opt.label}>{opt.label}</span>
++                    {value === opt.value && <Check className="w-4 h-4 flex-shrink-0" />}
++                  </div>
++                ))
++              ) : (
++                <div className="px-4 py-8 text-center text-sm text-muted-foreground/50 italic font-bold">
++                  No matches found.
++                </div>
++              )}
++            </div>
++          </motion.div>
++        )}
++      </AnimatePresence>
++    </div>
++  );
++}
+diff --git a/src/components/TransactionTable.tsx b/src/components/TransactionTable.tsx
+index 2b3d40c..7226f04 100644
+--- a/src/components/TransactionTable.tsx
++++ b/src/components/TransactionTable.tsx
+@@ -325,21 +325,21 @@ export default function TransactionTable({
+       </div>
+ 
+       <div className={cn(
+-        "w-full bg-white dark:bg-black rounded-xl border shadow-sm overflow-hidden text-foreground transition-all",
+-        type === 'income' ? "border-emerald-500/20 shadow-emerald-500/5" : "border-rose-500/20 shadow-rose-500/5"
++        "w-full bg-white dark:bg-[#0a0a0a] rounded-[24px] lg:rounded-[32px] border-2 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none overflow-hidden text-foreground transition-all",
++        type === 'income' ? "border-emerald-100 dark:border-emerald-900/30" : "border-rose-100 dark:border-rose-900/30"
+       )}>
+-        <div className="overflow-x-auto">
++        <div className="overflow-x-auto custom-scrollbar">
+           <table className="w-full text-left border-collapse print-table">
+             <thead>
+               <tr className={cn(
+-                "border-b border-border transition-colors",
++                "border-b-2 border-border/50 transition-colors",
+                 type === 'income' ? "bg-emerald-50/50 dark:bg-emerald-950/20" : "bg-rose-50/50 dark:bg-rose-950/20"
+               )}>
+-                <th className="px-5 lg:px-8 py-4 lg:py-6 text-[11px] lg:text-[14px] font-black uppercase tracking-wider text-slate-500 border-r border-border/50 w-40 lg:w-56">তারিখ (Date)</th>
+-                <th className="px-5 lg:px-8 py-4 lg:py-6 text-[11px] lg:text-[14px] font-black uppercase tracking-wider text-slate-500 border-r border-border/50">বিবরণ (Description)</th>
+-                {showWeight && <th className="px-5 lg:px-8 py-4 lg:py-6 text-[11px] lg:text-[14px] font-black uppercase tracking-wider text-slate-500 border-r border-border/50 w-32 lg:w-48">ওজন (Weight)</th>}
+-                <th className="px-5 lg:px-8 py-4 lg:py-6 text-[11px] lg:text-[14px] font-black uppercase tracking-wider text-slate-500 border-r border-border/50 w-48 lg:w-64">টাকা (Amount)</th>
+-                <th className="px-5 lg:px-8 py-4 lg:py-6 text-[11px] lg:text-[14px] font-black uppercase tracking-wider text-slate-500 w-28 text-right no-print">অ্যাকশন</th>
++                <th className="px-5 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground border-r border-border/30 w-36 lg:w-48">তারিখ (Date)</th>
++                <th className="px-5 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground border-r border-border/30">বিবরণ (Description)</th>
++                {showWeight && <th className="px-5 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground border-r border-border/30 w-32 lg:w-44">ওজন (Weight)</th>}
++                <th className="px-5 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground border-r border-border/30 w-48 lg:w-56 text-right">টাকা (Amount)</th>
++                <th className="px-5 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground w-28 text-center no-print">অ্যাকশন</th>
+               </tr>
+             </thead>
+             <tbody className="divide-y divide-border/50">
+@@ -396,7 +396,7 @@ export default function TransactionTable({
+                       </td>
+                     )}
+                     <td className={cn(
+-                      "px-5 py-4 border-r border-border/30 font-black",
++                      "px-5 py-4 border-r border-border/30 font-black text-right",
+                       type === 'income' ? "text-emerald-600" : "text-rose-600"
+                     )}>
+                       {editingId === item.id ? (
+@@ -410,24 +410,24 @@ export default function TransactionTable({
+                         <span className="text-base lg:text-2xl tracking-tighter">৳ {formatBanglaAmount(item.amount)}</span>
+                       )}
+                     </td>
+-                    <td className="px-5 py-4 text-right no-print">
+-                      <div className="flex items-center justify-end gap-1.5">
++                    <td className="px-5 py-4 text-center no-print">
++                      <div className="flex items-center justify-center gap-1.5">
+                         {editingId === item.id ? (
+                           <>
+-                            <button onClick={() => handleSaveEdit(item.id)} className="p-1.5 rounded-lg bg-black text-white dark:bg-white dark:text-black">
+-                              <Check className="w-3.5 h-3.5" />
++                            <button onClick={() => handleSaveEdit(item.id)} className="p-2 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-black hover:opacity-80 transition-opacity">
++                              <Check className="w-4 h-4" />
+                             </button>
+-                            <button onClick={() => setEditingId(null)} className="p-1.5 rounded-lg border border-border">
+-                              <X className="w-3.5 h-3.5" />
++                            <button onClick={() => setEditingId(null)} className="p-2 rounded-xl border border-border hover:bg-muted transition-colors">
++                              <X className="w-4 h-4" />
+                             </button>
+                           </>
+                         ) : (
+                           <>
+-                            <button onClick={() => startEditing(item)} className="p-2 rounded-lg text-muted-foreground hover:text-foreground transition-colors">
+-                              <Edit2 className="w-3.5 h-3.5" />
++                            <button onClick={() => startEditing(item)} className="p-2 rounded-xl text-muted-foreground hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors">
++                              <Edit2 className="w-4 h-4" />
+                             </button>
+-                            <button onClick={() => handleDelete(item.id)} className="p-2 rounded-lg text-muted-foreground hover:text-rose-500 transition-colors">
+-                              <Trash2 className="w-3.5 h-3.5" />
++                            <button onClick={() => handleDelete(item.id)} className="p-2 rounded-xl text-muted-foreground hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors">
++                              <Trash2 className="w-4 h-4" />
+                             </button>
+                           </>
+                         )}
+@@ -439,96 +439,96 @@ export default function TransactionTable({
+ 
+               {/* Add New Row */}
+               <tr className={cn(
+-                "no-print border-t-2 border-border shadow-[inset_0_-2px_10px_rgba(0,0,0,0.02)]",
+-                type === 'income' ? "bg-emerald-50/30 dark:bg-emerald-950/10" : "bg-rose-50/30 dark:bg-rose-950/10"
++                "no-print border-t-2 border-border/80 shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)]",
++                type === 'income' ? "bg-emerald-50/40 dark:bg-emerald-950/20" : "bg-rose-50/40 dark:bg-rose-950/20"
+               )}>
+-                <td className="px-5 py-6 border-r border-border/30">
++                <td className="px-5 py-5 border-r border-border/30">
+                   <input 
+                     type="date" 
+                     value={newDate}
+                     onChange={(e) => setNewDate(e.target.value)}
+-                    className="w-full bg-white dark:bg-zinc-900 border border-border rounded-xl px-3 py-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all font-mono"
++                    className="w-full bg-white dark:bg-zinc-900 border border-border rounded-xl px-4 py-3 text-sm font-mono font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                   />
+                 </td>
+-                <td className="px-5 py-6 border-r border-border/30">
++                <td className="px-5 py-5 border-r border-border/30">
+                   <input 
+                     type="text" 
+-                    placeholder="নথিবদ্ধ করুন..."
++                    placeholder="Entry details..."
+                     value={newDesc}
+                     onFocus={() => setIsAdding(true)}
+                     onChange={(e) => setNewDesc(e.target.value)}
+-                    className="w-full bg-white dark:bg-zinc-900 border border-border rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all"
++                    className="w-full bg-white dark:bg-zinc-900 border border-border rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50"
+                   />
+                 </td>
+                 {showWeight && (
+-                  <td className="px-5 py-6 border-r border-border/30">
++                  <td className="px-5 py-5 border-r border-border/30">
+                     <input 
+                       type="number" 
+                       step="0.01"
+-                      placeholder="ওজন..."
++                      placeholder="Weight..."
+                       value={newWeight}
+                       onFocus={() => setIsAdding(true)}
+                       onChange={(e) => setNewWeight(e.target.value)}
+-                      className="w-full bg-white dark:bg-zinc-900 border border-border rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all"
++                      className="w-full bg-white dark:bg-zinc-900 border border-border rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50"
+                     />
+                   </td>
+                 )}
+-                <td className="px-5 py-6 border-r border-border/30">
++                <td className="px-5 py-5 border-r border-border/30">
+                   <div className="relative group">
+-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-black text-muted-foreground group-focus-within:text-foreground transition-colors">৳</span>
++                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-black text-muted-foreground group-focus-within:text-foreground transition-colors">৳</span>
+                     <input 
+                       type="number" 
+-                      placeholder="টাকার পরিমাণ..."
++                      placeholder="Amount..."
+                       value={newAmount}
+                       onFocus={() => setIsAdding(true)}
+                       onChange={(e) => setNewAmount(e.target.value)}
+-                      className="w-full bg-white dark:bg-zinc-900 border border-border rounded-xl pl-8 pr-4 py-2.5 text-sm font-black outline-none focus:ring-2 focus:ring-primary/20 transition-all"
++                      className="w-full bg-white dark:bg-zinc-900 border border-border rounded-xl pl-8 pr-4 py-3 text-sm font-black outline-none focus:ring-2 focus:ring-primary/20 transition-all text-right placeholder:text-muted-foreground/50"
+                     />
+                   </div>
+                 </td>
+-                <td className="px-5 py-6 text-right no-print">
++                <td className="px-5 py-5 text-center no-print">
+                   <button 
+                     onClick={handleAdd}
+                     disabled={!newAmount}
+                     className={cn(
+-                      "flex items-center justify-center w-full py-2.5 rounded-xl text-white font-black text-[10px] uppercase tracking-[0.2em] disabled:opacity-20 transition-all shadow-lg active:scale-95",
+-                      type === 'income' ? "bg-emerald-600 shadow-emerald-600/20" : "bg-rose-600 shadow-rose-600/20"
++                      "flex items-center justify-center w-full py-3 rounded-xl text-white font-black text-[11px] uppercase tracking-[0.2em] disabled:opacity-30 transition-all shadow-md active:scale-95",
++                      type === 'income' ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20" : "bg-rose-600 hover:bg-rose-700 shadow-rose-600/20"
+                     )}
+                   >
+-                    <Plus className="w-4 h-4 mr-2" strokeWidth={3} />
+-                    Submit
++                    <Plus className="w-4 h-4 mr-1" strokeWidth={3} />
++                    Add
+                   </button>
+                 </td>
+               </tr>
+             </tbody>
+             <tfoot>
+               <tr className={cn(
+-                "border-t-4 h-24 transition-colors",
+-                type === 'income' ? "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500" : "bg-rose-50 dark:bg-rose-900/20 border-rose-500"
++                "border-t-2 border-border h-24 transition-colors",
++                type === 'income' ? "bg-emerald-50 dark:bg-emerald-950/40" : "bg-rose-50 dark:bg-rose-950/40"
+               )}>
+-                <td colSpan={2} className="px-8 py-0 border-r border-border/20">
++                <td colSpan={2} className="px-5 lg:px-8 py-0 border-r border-border/20 text-right">
+                   <div className="flex flex-col">
+                     <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mb-1 italic opacity-50">Aggregate Total</span>
+                     <span className={cn(
+-                      "text-sm font-black uppercase tracking-tighter",
++                      "text-sm lg:text-lg font-black uppercase tracking-tighter",
+                       type === 'income' ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400"
+                     )}>
+-                      মোট {type === 'income' ? 'আয়' : 'ব্যয়'} (Total {type === 'income' ? 'Income' : 'Costing'})
++                      মোট {type === 'income' ? 'আয়' : 'ব্যয়'}
+                     </span>
+                   </div>
+                 </td>
+                 {showWeight && (
+-                  <td className="px-8 py-0 text-2xl font-black text-foreground border-r border-border/20 tracking-tighter">
++                  <td className="px-5 lg:px-8 py-0 text-2xl font-black text-foreground border-r border-border/20 tracking-tighter">
+                     {toBanglaNumeral(totalWeight.toFixed(2))}<span className="text-xs ml-1 font-bold opacity-40 uppercase tracking-widest">গ্রাম (Grams)</span>
+                   </td>
+                 )}
+                 <td className={cn(
+-                  "px-8 py-0 text-3xl lg:text-6xl font-black tracking-tighter",
++                  "px-5 lg:px-8 py-0 text-3xl lg:text-5xl font-black tracking-tighter text-right",
+                   type === 'income' ? "text-emerald-600" : "text-rose-600"
+                 )} colSpan={showWeight ? 1 : 2}>
+                   ৳ {formatBanglaAmount(totalAmount)}
+                 </td>
+-                <td className="px-8 py-0 no-print sm:table-cell hidden"></td>
++                <td className="px-5 lg:px-8 py-0 no-print sm:table-cell hidden"></td>
+               </tr>
+             </tfoot>
+           </table>
+diff --git a/src/lib/actions.ts b/src/lib/actions.ts
+index 4ca75db..9b48ff5 100644
+--- a/src/lib/actions.ts
++++ b/src/lib/actions.ts
+@@ -376,13 +376,6 @@ export async function getMonthEndSummary(monthId: number) {
+       orderBy: [transactions.category],
+     });
+ 
+-    const normalize = (cat: string) => {
+-      const trimmed = cat.trim();
+-      return trimmed.includes("(")
+-        ? trimmed.replace(/\([^)]*\)$/, "(মাস-সাল)")
+-        : trimmed;
+-    };
+-
+     const incomeByCategory: Record<string, number> = {};
+     const costingByCategory: Record<string, number> = {};
+ 
+@@ -392,7 +385,7 @@ export async function getMonthEndSummary(monthId: number) {
+       // as it's already reflected in the Opening/Closing Bank balances.
+       if (BANK_CATEGORIES.includes(t.category)) return;
+ 
+-      const normCat = normalize(t.category);
++      const normCat = t.category.trim();
+       if (t.type === "income") {
+         let targetCat = normCat;
+         // Split Nehara from Dust Sale if description contains the keyword
+diff --git a/src/lib/constants.ts b/src/lib/constants.ts
+index 0dc0297..7c0200a 100644
+--- a/src/lib/constants.ts
++++ b/src/lib/constants.ts
+@@ -26,28 +26,28 @@ export const WEIGHT_TRACKED_CATEGORIES = [
+ ];
+ 
+ export const COSTING_CATEGORIES = [
+-  "পরিচালক মাসিক সম্মানী প্রদান (মাস-সাল)",
+-  "পরিচালকগণের সম্মানী প্রদান (ব্যাংক) (মাস-সাল)",
+-  "স্টাফদের বেতন প্রধান (ব্যাংক) (মাস-সাল)",
+-  "ডিজিটাল মার্কেটিং (মাস-সাল)",
+-  "বাইতুল মোকারাম অফিস খরচ (মাস-সাল)",
+-  "মাসিক বেতন প্রদান (স্টাফ ক্লিনার) (মাস-সাল)",
+-  "স্টেশনারি ও পি.পি.ই খরচের বিবরণ (মাস-সাল)",
+-  "যাতায়াত সংক্রান্ত খরচের বিবরণ (মাস-সাল)",
+-  "পরিচালক, অথিতি, ও স্টাফ আপ্যায়নের বিবরণ (মাস-সাল)",
+-  "বিবিধ খরচের বিবরণ (মাস-সাল)",
+-  "কাঁচামাল ও বিভিন্ন এসিড ক্রয় (মাস-সাল)",
+-  "বিভিন্ন ইলেকট্রিক যন্ত্রাংশ ক্রয় ও মেরামত (মাস-সাল)",
+-  "বিভিন্ন প্রকার বিল প্রদানের বিবরণ (মাস-সাল)",
+-  "স্টাফ লোন প্রদান এর বিবরণ (মাস-সাল)",
+-  "ভুল ডেটা এন্ট্রি ও ডিসকাউন্ট (মাস-সাল)",
+-  "বিদুৎ বিল বিবরণ (মাস-সাল)",
+-  "রিফাইনিং প্রজেক্ট বিবিধ খরচ (মাস-সাল)",
+-  "বোর্ড মিটিং এর খরচ (মাস-সাল)",
+-  "প্রিন্টিং এর খরচ (মাস-সাল)",
+-  "ব্যাংক এ যাবতীয় জমা (মাস-সাল)",
+-  "ব্যাংক এর আবগারি শুল্ক(মাস-সাল)",
+-  "ব্যাংক এর মাধ্যমে পেমেন্ট (মাস-সাল)",
++  "পরিচালক মাসিক সম্মানী প্রদান",
++  "পরিচালকগণের সম্মানী প্রদান (ব্যাংক)",
++  "স্টাফদের বেতন প্রধান (ব্যাংক)",
++  "ভ্যাট ও ট্যাক্স",
++  "বাইতুল মোকারাম অফিস খরচ",
++  "মাসিক বেতন প্রদান (স্টাফ ক্লিনার)",
++  "স্টেশনারি ও পি.পি.ই খরচের বিবরণ",
++  "যাতায়াত সংক্রান্ত খরচের বিবরণ",
++  "পরিচালক, অথিতি, ও স্টাফ আপ্যায়নের বিবরণ",
++  "বিবিধ খরচের বিবরণ",
++  "কাঁচামাল ও বিভিন্ন এসিড ক্রয়",
++  "বিভিন্ন ইলেকট্রিক যন্ত্রাংশ ক্রয় ও মেরামত",
++  "বিভিন্ন প্রকার বিল প্রদানের বিবরণ",
++  "স্টাফ লোন প্রদান এর বিবরণ",
++  "ভুল ডেটা এন্ট্রি ও ডিসকাউন্ট",
++  "বিদুৎ বিল বিবরণ",
++  "রিফাইনিং প্রজেক্ট বিবিধ খরচ",
++  "বোর্ড মিটিং এর খরচ",
++  "প্রিন্টিং এর খরচ",
++  "ব্যাংক এ যাবতীয় জমা",
++  "ব্যাংক এর আবগারি শুল্ক",
++  "ব্যাংক এর মাধ্যমে পেমেন্ট",
+ ];
+ 
+ export const BANK_CATEGORIES = [
+@@ -91,7 +91,7 @@ export const DESCRIPTION_SUGGESTIONS: Record<string, string[]> = {
+   ],
+ 
+   // Costing Section (Normalized keys)
+-  "পরিচালক মাসিক সম্মানী প্রদান (মাস-সাল)": [
++  "পরিচালক মাসিক সম্মানী প্রদান": [
+     "কাজী সিরাজুল ইসলাম",
+     "জনাব গঙ্গাচরণ মালাকার",
+     "জনাব ডা. দিলীপ কুমার রায়",
+@@ -102,7 +102,7 @@ export const DESCRIPTION_SUGGESTIONS: Record<string, string[]> = {
+     "জনাব আবুল খায়ের সিকদার",
+     "জনাব ভোলানাথ ঘোষ"
+   ],
+-  "পরিচালকগণের সম্মানী প্রদান (ব্যাংক) (মাস-সাল)": [
++  "পরিচালকগণের সম্মানী প্রদান (ব্যাংক)": [
+     "সম্মানিত সকল পরিচালক (৭) জন - জনাব কাজী সিরাজুল ইসলাম সাহেব ও জনাব ডাঃ দিলীপ কুমার রায় সাহেব এর টাকা ক্যাশ-এ দেয়া হয়",
+     "কাজী সিরাজুল ইসলাম",
+     "জনাব গঙ্গাচরণ মালাকার",
+@@ -123,18 +123,18 @@ export const DESCRIPTION_SUGGESTIONS: Record<string, string[]> = {
+     "অগ্রিম ইনকাম ট্যাক্স প্রধান",
+     "ট্যাক্স প্রধান"
+   ],
+-  "বাইতুল মোকারাম অফিস খরচ (মাস-সাল)": [
++  "বাইতুল মোকারাম অফিস খরচ": [
+     "ভ্যাট",
+     "যাতায়াত-মেশিন মেরামত",
+     "ক্লিনার বেতন",
+     "স্টাফ সেলারি"
+   ],
+ 
+-  "স্টেশনারি ও পি.পি.ই খরচের বিবরণ (মাস-সাল)": [
++  "স্টেশনারি ও পি.পি.ই খরচের বিবরণ": [
+     "আদা, লং, এলাচ, চাপাতি, চিনি",
+     "মার্কার কলম"
+   ],
+-  "যাতায়াত সংক্রান্ত খরচের বিবরণ (মাস-সাল)": [
++  "যাতায়াত সংক্রান্ত খরচের বিবরণ": [
+     "যাতায়াত - মাসুদ",
+     "যাতায়াত - ব্যাংক, বায়তুল মোকারম, নিউমার্কেট",
+     "এডভোকেট বাবুল ট্যাক্স পেরন",
+@@ -149,25 +149,30 @@ export const DESCRIPTION_SUGGESTIONS: Record<string, string[]> = {
+     "বায়তুল মোকারম",
+     "ফটোকপি"
+   ],
+-  "পরিচালক, অথিতি, ও স্টাফ আপ্যায়নের বিবরণ (মাস-সাল)": [
++  "পরিচালক, অথিতি, ও স্টাফ আপ্যায়নের বিবরণ": [
++    "স্টাফ টিফিন",
++    "ইফতার",
++    "জিকে",
++    "পানি",
+     "২৪ পিস পানি",
+     "মেল্টার নোমান",
+     "অতিথি আপ্যায়ন"
+   ],
+-  "বিবিধ খরচের বিবরণ (মাস-সাল)": [
++  "বিবিধ খরচের বিবরণ": [
++    "বাট্টা (৫,১০,২০,৫০)",
++    "তৃতীয় লিঙ্গ",
++    "পাথ",
++    "সরিষার তেল",
+     "ডাস্ট (নদীর ওপার ও কারখানা)",
+     "নেটওয়ার্ক ইঞ্জিনার",
+     "এসি সার্ভিস চার্জ - লুৎফুর",
+     "গণেশ স্প্রিড মানি",
+     "স্ট্যাম্প টিকিট",
+     "ট্যাক্স পেপারস",
+-    "বাট্টা (৫,১০,২০,৫০)",
+     "নেটওয়ার্ক ইন্টারনেট ও ফেস মেশিন",
+     "পূজার চাঁদা তাঁতীবাজার",
+-    "সরিষার তেল",
+     "কফি",
+     "এসি সকেট ও প্লাগ",
+-    "তৃতীয় লিঙ্গ",
+     "ঝুলন বাড়ি",
+     "শিবমন্দির পূজা কমিটি",
+     "কেরোসিন তেল",
+@@ -176,20 +181,22 @@ export const DESCRIPTION_SUGGESTIONS: Record<string, string[]> = {
+     "কোতায়ালী রোড - সার্ভিস",
+     "ডোনেশন"
+   ],
+-  "কাঁচামাল ও বিভিন্ন এসিড ক্রয় (মাস-সাল)": [
++  "কাঁচামাল ও বিভিন্ন এসিড ক্রয়": [
++    "পস পেপার",
++    "মেল্টিং পট",
+     "পলিশ পেপার",
+     "অ্যাসিড ক্রয়",
+     "নাইট্রিক অ্যাসিড",
+     "সালফিউরিক অ্যাসিড"
+   ],
+-  "বিভিন্ন ইলেকট্রিক যন্ত্রাংশ ক্রয় ও মেরামত (মাস-সাল)": [
++  "বিভিন্ন ইলেকট্রিক যন্ত্রাংশ ক্রয় ও মেরামত": [
+     "প্রিন্টার",
+     "টোনার",
+     "রিবন",
+     "কালার",
+     "চিলার মেশিন"
+   ],
+-  "বিভিন্ন প্রকার বিল প্রদানের বিবরণ (মাস-সাল)": [
++  "বিভিন্ন প্রকার বিল প্রদানের বিবরণ": [
+     "ডিস বিল",
+     "ইন্টারনেট বিল",
+     "প্রত্রিকা বিল",
+@@ -197,28 +204,29 @@ export const DESCRIPTION_SUGGESTIONS: Record<string, string[]> = {
+     "সফ্টওয়ার মেইনটেইন চার্জ",
+     "সিসি টিভি বিল"
+   ],
+-  "স্টাফ লোন প্রদান এর বিবরণ (মাস-সাল)": [
++  "স্টাফ লোন প্রদান এর বিবরণ": [
+     "জয়ন্ত কর্মকার",
+     "লিটন দাস",
+     "বিধান পাল"
+   ],
+-  "ভুল ডেটা এন্ট্রি ও ডিসকাউন্ট (মাস-সাল)": [
++  "ভুল ডেটা এন্ট্রি ও ডিসকাউন্ট": [
+     "টনস",
+     "রাইটিং বিল"
+   ],
+-  "বিদুৎ বিল বিবরণ (মাস-সাল)": [
++  "বিদুৎ বিল বিবরণ": [
+     "নতুন ও পুরনো মিটার",
+     "পুরাতন মিটার",
+     "নতুন মিটার"
+   ],
+-  "রিফাইনিং প্রজেক্ট বিবিধ খরচ (মাস-সাল)": [
++  "রিফাইনিং প্রজেক্ট বিবিধ খরচ": [
++    "নাইট্রিক এসিড",
++    "সার্ভিস চার্জ",
+     "ভ্যাট",
+     "রাইজার, ফ্যান মেরামত ও অ্যাপ্রন",
+     "এসি ক্রয়",
+-    "সার ক্রয়",
+-    "সার্ভিস চার্জ"
++    "সার ক্রয়"
+   ],
+-  "প্রিন্টিং এর খরচ (মাস-সাল)": [
++  "প্রিন্টিং এর খরচ": [
+     "মাসুদ (নকশি) এক্স-রে নতুন কাগজ অর্ডার"
+   ],
+ 
+@@ -245,16 +253,12 @@ export const DESCRIPTION_SUGGESTIONS: Record<string, string[]> = {
+ 
+ export const getSuggestions = (category: string): string[] => {
+   if (!category) return [];
+-  // Normalize: replace any specific date inside parentheses with the placeholder for lookup
+-  const normalized = category.includes('(') 
+-    ? category.replace(/\([^)]*\)$/, '(মাস-সাল)') 
+-    : category;
+   
+-  const results = DESCRIPTION_SUGGESTIONS[normalized] || [];
++  const results = DESCRIPTION_SUGGESTIONS[category] || [];
+   
+-  // If no suggestions, return the category name (cleaned of placeholders)
++  // If no suggestions, return the category name
+   if (results.length === 0 && category) {
+-    return [category.replace('(মাস-সাল)', '').trim()];
++    return [category.trim()];
+   }
+   
+   return results;

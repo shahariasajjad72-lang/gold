@@ -14,7 +14,18 @@ import {
   inArray,
 } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { BANK_CATEGORIES } from "./constants";
+
+const PURE_BANK_CATEGORIES = [
+  "ব্যাংক এর আবগারি শুল্ক",
+  "ব্যাংক এর মাধ্যমে পেমেন্ট",
+  "ব্যাংক হতে প্রাপ্ত লভ্যাংশ"
+];
+const excludePureBankCategories = not(or(
+  ...PURE_BANK_CATEGORIES.map(c => like(transactions.category, `${c}%`))
+));
+
+
+import { BANK_CATEGORIES, INCOME_CATEGORIES, COSTING_CATEGORIES } from "./constants";
 
 export async function getMonths() {
   try {
@@ -57,8 +68,9 @@ export async function getMonthById(id: number) {
   }
 }
 
-async function syncMonthTotals(monthId: number) {
+export async function syncMonthTotals(monthId: number) {
   try {
+
     const incomeResult = await db.select({ 
       total: sql<number>`sum(${transactions.amount})` 
     })
@@ -66,7 +78,8 @@ async function syncMonthTotals(monthId: number) {
     .where(and(
       eq(transactions.monthId, monthId), 
       eq(transactions.type, 'income'),
-      notInArray(transactions.category, BANK_CATEGORIES)
+      notInArray(transactions.category, BANK_CATEGORIES),
+      excludePureBankCategories,
     ));
 
     const costingResult = await db.select({ 
@@ -77,6 +90,7 @@ async function syncMonthTotals(monthId: number) {
       eq(transactions.monthId, monthId), 
       eq(transactions.type, 'costing'),
       notInArray(transactions.category, BANK_CATEGORIES),
+      excludePureBankCategories,
       not(or(
         like(transactions.category, 'স্টাফদের বেতন প্রধান (ব্যাংক)%'),
         like(transactions.category, 'পরিচালকগণের সম্মানী প্রদান (ব্যাংক)%')
@@ -219,6 +233,7 @@ export async function getMonthlyStatsUpToDate(monthId: number, dateStr: string) 
         eq(transactions.monthId, monthId), 
         eq(transactions.type, 'income'),
         notInArray(transactions.category, BANK_CATEGORIES),
+      excludePureBankCategories,
         sql`${transactions.date} <= ${selectedDate.toISOString()}`
     ));
 
@@ -230,6 +245,7 @@ export async function getMonthlyStatsUpToDate(monthId: number, dateStr: string) 
         eq(transactions.monthId, monthId), 
         eq(transactions.type, 'costing'),
         notInArray(transactions.category, BANK_CATEGORIES),
+      excludePureBankCategories,
         not(or(
           like(transactions.category, 'স্টাফদের বেতন প্রধান (ব্যাংক)%'),
           like(transactions.category, 'পরিচালকগণের সম্মানী প্রদান (ব্যাংক)%')
@@ -261,6 +277,7 @@ export async function getMonthlyStatsBeforeDate(monthId: number, dateStr: string
         eq(transactions.monthId, monthId), 
         eq(transactions.type, 'income'),
         notInArray(transactions.category, BANK_CATEGORIES),
+      excludePureBankCategories,
         sql`${transactions.date} < ${startOfDay.toISOString()}`
     ));
 
@@ -272,6 +289,7 @@ export async function getMonthlyStatsBeforeDate(monthId: number, dateStr: string
         eq(transactions.monthId, monthId), 
         eq(transactions.type, 'costing'),
         notInArray(transactions.category, BANK_CATEGORIES),
+      excludePureBankCategories,
         not(or(
           like(transactions.category, 'স্টাফদের বেতন প্রধান (ব্যাংক)%'),
           like(transactions.category, 'পরিচালকগণের সম্মানী প্রদান (ব্যাংক)%')
@@ -300,6 +318,7 @@ export async function getDailyTransactions(monthId: number, dateStr: string) {
       where: and(
         eq(transactions.monthId, monthId),
         notInArray(transactions.category, BANK_CATEGORIES),
+      excludePureBankCategories,
         sql`${transactions.date} >= ${startOfDay.toISOString()} AND ${transactions.date} <= ${endOfDay.toISOString()}`
       ),
       orderBy: [desc(transactions.type), transactions.category],
@@ -319,6 +338,7 @@ export async function getMonthlyDailyBreakdown(monthId: number) {
       where: and(
         eq(transactions.monthId, monthId),
         notInArray(transactions.category, BANK_CATEGORIES),
+      excludePureBankCategories,
         not(or(
           like(transactions.category, 'স্টাফদের বেতন প্রধান (ব্যাংক)%'),
           like(transactions.category, 'পরিচালকগণের সম্মানী প্রদান (ব্যাংক)%')
@@ -376,6 +396,19 @@ export async function getMonthEndSummary(monthId: number) {
       orderBy: [transactions.category],
     });
 
+    const ALL_CATEGORIES = [...INCOME_CATEGORIES, ...COSTING_CATEGORIES, ...BANK_CATEGORIES];
+
+    const normalize = (cat: string) => {
+      const trimmed = cat.trim();
+      if (trimmed.includes("(")) {
+        const stripped = trimmed.replace(/\s*\([^)]*\)$/, "").trim();
+        if (ALL_CATEGORIES.includes(stripped)) {
+          return stripped;
+        }
+      }
+      return trimmed;
+    };
+
     const incomeByCategory: Record<string, number> = {};
     const costingByCategory: Record<string, number> = {};
 
@@ -385,7 +418,7 @@ export async function getMonthEndSummary(monthId: number) {
       // as it's already reflected in the Opening/Closing Bank balances.
       if (BANK_CATEGORIES.includes(t.category)) return;
 
-      const normCat = t.category.trim();
+      const normCat = normalize(t.category);
       if (t.type === "income") {
         let targetCat = normCat;
         // Split Nehara from Dust Sale if description contains the keyword
