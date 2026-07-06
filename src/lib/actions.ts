@@ -22,7 +22,7 @@ const PURE_BANK_CATEGORIES = [
 ];
 const excludePureBankCategories = not(or(
   ...PURE_BANK_CATEGORIES.map(c => like(transactions.category, `${c}%`))
-));
+)!);
 
 
 import { BANK_CATEGORIES, INCOME_CATEGORIES, COSTING_CATEGORIES } from "./constants";

@@ -6,6 +6,7 @@ async function run() {
   const allMonths = await db.query.months.findMany();
   for (const m of allMonths) {
     const summary = await getMonthEndSummary(m.id);
+    if (!summary) continue;
     const month = summary.month;
     
     const totalIncome = Object.values(summary.incomeByCategory || {}).reduce((s: number, v) => s + (v as number), 0);

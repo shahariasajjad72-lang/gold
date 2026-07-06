@@ -30,5 +30,18 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "query_test.ts",
+    "query_test2.ts",
+    "query_test3.ts",
+    "query_test5.ts",
+    "query_test6.ts",
+    "query_test_feb.ts",
+    "check_all.ts",
+    "sim_gaps.ts",
+    "re-sync-totals.ts",
+    "run_sync.ts",
+    "test_drizzle.ts"
+  ]
 }

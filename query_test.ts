@@ -6,6 +6,10 @@ import { INCOME_CATEGORIES, COSTING_CATEGORIES, BANK_CATEGORIES } from "./src/li
 
 async function run() {
   const summary = await getMonthEndSummary(2); // Assuming May is month 2
+  if (!summary) {
+    console.error("Summary not found");
+    process.exit(1);
+  }
   const month = summary.month;
   
   const totalIncome = Object.values(summary.incomeByCategory || {}).reduce((s: number, v) => s + (v as number), 0);
